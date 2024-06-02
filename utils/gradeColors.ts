@@ -5,5 +5,5 @@ export default {
   Restricted: "#8847ff",
   Classified: "#d32ee6",
   Covert: "#eb4b4b",
-  "Rare Special Item": "#ffd700"
+  "Rare Special Item": "#ffd700",
 };
