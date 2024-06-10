@@ -8,13 +8,13 @@
     "start": "next start",
     "lint": "next lint",
     "prettier": "prettier . --write",
-    "introspect": "drizzle-kit introspect:mysql"
+    "db:push": "drizzle-kit push"
   },
   "dependencies": {
-    "@planetscale/database": "^1.16.0",
+    "@planetscale/database": "^1.18.0",
     "@vercel/analytics": "^1.2.2",
     "@vercel/speed-insights": "^1.0.10",
-    "drizzle-orm": "^0.30.9",
+    "drizzle-orm": "^0.31.2",
     "next": "^14.2.3",
     "react": "^18",
     "react-dom": "^18",
@@ -27,7 +27,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10",
-    "drizzle-kit": "^0.20.14",
+    "drizzle-kit": "^0.22.7",
     "postcss": "^8",
     "prettier": "^3.3.0",
     "prettier-plugin-tailwindcss": "^0.6.1",

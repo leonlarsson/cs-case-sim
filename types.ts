@@ -1,5 +1,5 @@
 import { InferSelectModel } from "drizzle-orm";
-import { items } from "./lib/db/schema";
+import { caseSimItems } from "./db/schema";
 
 export type ItemType = {
   /** Extra properties from custom case API */
@@ -47,4 +47,4 @@ export type ItemTypeLocalStorage = ItemType & {
   casePrice?: number | null;
 };
 
-export type ItemTypeDB = InferSelectModel<typeof items>;
+export type ItemTypeDB = InferSelectModel<typeof caseSimItems>;

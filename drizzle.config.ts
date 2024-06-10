@@ -1,11 +1,13 @@
-import type { Config } from "drizzle-kit";
+import { defineConfig } from "drizzle-kit";
 
-export default {
-  driver: "mysql2",
-  out: "./lib/db",
-  schema: "./lib/db/schema.ts",
+export default defineConfig({
+  dialect: "mysql",
+  schema: "./db/schema.ts",
+  migrations: {
+    table: "case_sim_items_migrations",
+  },
   dbCredentials: {
-    uri: process.env.DATABASE_URL!.replace(
+    url: process.env.DATABASE_URL!.replace(
       "?sslaccept=strict",
       '?ssl={"rejectUnauthorized":true}',
     ),
@@ -15,4 +17,4 @@ export default {
   verbose: true,
   // Always ask for confirmation
   strict: true,
-} satisfies Config;
+});

@@ -1,4 +1,4 @@
-import { planetscaleClient } from "./";
+import { planetscaleClient } from "@/db";
 
 const deleteOldNonCovertItems = async (batchSize: number) => {
   // Max 100k batchSize

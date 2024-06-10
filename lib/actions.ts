@@ -4,8 +4,8 @@ import { cookies } from "next/headers";
 import { z } from "zod";
 import { and, count, desc, eq, inArray, max } from "drizzle-orm";
 import { CaseDataType, ItemType, ItemTypeDB } from "@/types";
-import { db } from "./db";
-import { items } from "./db/schema";
+import db from "@/db";
+import { caseSimItems } from "@/db/schema";
 
 const dataSchema = z.object({
   caseData: z.object({
@@ -62,7 +62,7 @@ export const addItemToDB = async (
   } = itemData;
 
   try {
-    await db.insert(items).values({
+    await db.insert(caseSimItems).values({
       caseId,
       caseName,
       caseImage,
@@ -98,7 +98,7 @@ export const addItemsToDB = async (
   const unboxerId = await getOrCreateUnboxerIdCookie();
 
   try {
-    await db.insert(items).values(
+    await db.insert(caseSimItems).values(
       data.map(item => ({
         caseId: item.caseData.id,
         caseName: item.caseData.name,
@@ -126,7 +126,7 @@ export const getItemsFromDB = async (
   try {
     const rows = await db
       .select()
-      .from(items)
+      .from(caseSimItems)
       .where(
         and(
           onlyCoverts ? itemIsCovert : undefined,
@@ -135,7 +135,7 @@ export const getItemsFromDB = async (
             : undefined,
         ),
       )
-      .orderBy(desc(items.id))
+      .orderBy(desc(caseSimItems.id))
       .limit(100);
 
     return rows;
@@ -151,8 +151,10 @@ export const getTotalItemsFromDB = async (
 ): Promise<number | false> => {
   try {
     const totalItems = await db
-      .select({ value: onlyCoverts || onlyPersonal ? count() : max(items.id) })
-      .from(items)
+      .select({
+        value: onlyCoverts || onlyPersonal ? count() : max(caseSimItems.id),
+      })
+      .from(caseSimItems)
       .where(
         and(
           onlyCoverts ? itemIsCovert : undefined,
@@ -195,5 +197,5 @@ export const getOrCreateUnboxerIdCookie = async (): Promise<string> => {
   return newUnboxerId;
 };
 
-const itemIsCovert = inArray(items.rarity, ["Covert", "Extraordinary"]);
-const itemIsPersonal = (id: string) => eq(items.unboxerId, id);
+const itemIsCovert = inArray(caseSimItems.rarity, ["Covert", "Extraordinary"]);
+const itemIsPersonal = (id: string) => eq(caseSimItems.unboxerId, id);

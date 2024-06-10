@@ -5,4 +5,4 @@ export const planetscaleClient = new Client({
   url: process.env.DATABASE_URL,
 });
 
-export const db = drizzle(planetscaleClient);
+export default drizzle(planetscaleClient);
