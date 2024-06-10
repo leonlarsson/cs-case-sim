@@ -1,12 +1,6 @@
 import { MutableRefObject } from "react";
 import { gradeOddsCase, gradeOddsSouvenir } from "./gradeOdds";
-import {
-  CaseDataType,
-  GradeType,
-  ItemType,
-  ItemTypeLocalStorage,
-} from "@/types";
-import getCasePrice from "./getCasePrice";
+import { CaseDataType, GradeType, ItemType } from "@/types";
 
 // Determine if the item should be StatTrak
 // 1. Case has not disabled StatTraks
@@ -30,12 +24,10 @@ export default (
       itemData: ItemType;
     }[]
   >,
-): ItemTypeLocalStorage => {
-  // This is pretty hacky. If the case is of type "Case" or "Custom_Case", use the grade odds for cases. Otherwise, use the grade odds for souvenir packages.
+): ItemType => {
+  // This is pretty hacky. If the case is of type "Case", use the grade odds for cases. Otherwise, use the grade odds for souvenir packages.
   const gradeOdds =
-    caseData.type === "Case" || caseData.type === "Custom_Case"
-      ? gradeOddsCase
-      : gradeOddsSouvenir;
+    caseData.type === "Case" ? gradeOddsCase : gradeOddsSouvenir;
 
   const random = Math.random();
   let cumulativeProbability = 0;
@@ -56,11 +48,10 @@ export default (
         ? caseData.contains_rare
         : caseData.contains.filter(item => item.rarity.name === grade);
 
-      // If there are items available, return a random item and add the case price
+      // If there are items available, return a random item
       if (availableItems.length > 0) {
         const unboxedItem = {
           ...availableItems[Math.floor(Math.random() * availableItems.length)],
-          casePrice: getCasePrice(caseData.name),
         };
 
         // If the item is StatTrak, add the prefix to the name

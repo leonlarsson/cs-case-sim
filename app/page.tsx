@@ -2,17 +2,27 @@ import { Metadata } from "next";
 import casesLocal from "@/lib/data/cases.json";
 import souvenirCasesLocal from "@/lib/data/souvenir.json";
 import customCasesLocal from "@/lib/data/customCases.json";
-import casesMetadata from "@/lib/data/allCasesMetadata.json"; // https://bymykel.github.io/CSGO-API/api/en/crates.json -> json.map(x => ({ id: x.id, name: x.name }))
 import CasePicker from "@/components/CasePicker";
 import AboutButtonWithModal from "@/components/AboutButtonWithModal";
 import UnlockButton from "@/components/UnlockButton";
 import Button from "@/components/Button";
-import getCasePrice from "@/utils/getCasePrice";
 import { CaseDataType } from "@/types";
 import CaseItems from "@/components/CaseItems";
 
+// Just get the metadata for the cases
+const casesMetadata = [
+  ...casesLocal,
+  ...customCasesLocal,
+  ...souvenirCasesLocal,
+].map(x => ({
+  id: x.id,
+  name: x.name,
+  description: x.description,
+  image: x.image,
+}));
+
 type PageProps = {
-  searchParams: { case?: string; key?: string };
+  searchParams: { case?: string };
 };
 
 export const generateMetadata = ({ searchParams }: PageProps): Metadata => {
@@ -28,56 +38,38 @@ export const generateMetadata = ({ searchParams }: PageProps): Metadata => {
 export default async function Home({ searchParams }: PageProps) {
   const { case: selectedCaseParam } = searchParams;
 
-  const apis: { url: string; revalidateSeconds: number }[] = [
-    // {
-    //   url: "https://bymykel.github.io/CSGO-API/api/en/crates/cases.json",
-    //   revalidateSeconds: 3600,
-    // },
-    // {
-    //   url: "https://bymykel.github.io/CSGO-API/api/en/crates/souvenir.json",
-    //   revalidateSeconds: 3600,
-    // },
-    ...(searchParams.key
-      ? [
-          {
-            url: `https://case-sim-custom-case.ragnarok.workers.dev/cases?key=${searchParams.key}`,
-            revalidateSeconds: 0,
-          },
-        ]
-      : []),
-  ].filter(Boolean);
+  // The API made even more changes. If I use the API again, I will need to filter out certain types
+  // For now, I will just use the local data and update it manually
+  // const apis: { url: string; revalidateSeconds: number }[] = [
+  //   {
+  //     url: "https://bymykel.github.io/CSGO-API/api/en/crates/cases.json",
+  //     revalidateSeconds: 3600,
+  //   },
+  //   {
+  //     url: "https://bymykel.github.io/CSGO-API/api/en/crates/souvenir.json",
+  //     revalidateSeconds: 3600,
+  //   },
+  // ];
 
-  // Fetch both endpoints
-  const promises = apis.map(api =>
-    fetch(api.url, {
-      next: { revalidate: api.revalidateSeconds },
-    }).then(res => res.json()),
-  );
+  // const promises = apis.map(api =>
+  //   fetch(api.url, {
+  //     next: { revalidate: api.revalidateSeconds },
+  //   }).then(res => res.json()),
+  // );
 
-  const [/*cases, souvenirPackages, */ customCasesFromAPI] =
-    await Promise.all(promises);
+  // const [cases, souvenirPackages] = await Promise.all(promises);
 
   // Combine the case data arrays
   const casesData: CaseDataType[] = [
     // ...cases,
     ...casesLocal,
-    ...(searchParams.key ? customCasesFromAPI : []),
     ...customCasesLocal,
     ...souvenirCasesLocal,
     // ...souvenirPackages,
   ];
 
-  const caseMetadata = casesData.map(x => ({
-    id: x.id,
-    name: x.name,
-    description: x.description,
-    image: x.image,
-  }));
-
   const selectedCase =
     casesData.find(x => x.id === selectedCaseParam) ?? casesData[0];
-
-  const selectedCasePrice = getCasePrice(selectedCase.name);
 
   return (
     <main id="main" className="relative flex min-h-screen select-none flex-col">
@@ -100,7 +92,7 @@ export default async function Home({ searchParams }: PageProps) {
 
       {/* Header row */}
       <div className="mx-2 mt-2 flex flex-col-reverse justify-between gap-2 min-[800px]:flex-row">
-        <CasePicker availableCases={caseMetadata} />
+        <CasePicker availableCases={casesMetadata} />
 
         <Button
           variant="secondary-darker"
@@ -115,22 +107,7 @@ export default async function Home({ searchParams }: PageProps) {
       <div className="mt-3 flex flex-1 flex-col items-center gap-1 text-center">
         <h1 className="text-4xl font-medium text-white">Unlock Container</h1>
         <h4 className="text-xl">
-          Unlock <span className="font-semibold">{selectedCase.name}</span>{" "}
-          {selectedCasePrice && (
-            <span
-              className="font-medium tracking-wider"
-              title={`This case costs approximately $${selectedCasePrice.toLocaleString(
-                "en",
-                { minimumFractionDigits: 2 },
-              )} on Steam.`}
-            >
-              ($
-              {selectedCasePrice.toLocaleString("en", {
-                minimumFractionDigits: 2,
-              })}
-              )
-            </span>
-          )}
+          Unlock <span className="font-semibold">{selectedCase.name}</span>
         </h4>
 
         <img

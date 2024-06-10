@@ -36,16 +36,12 @@ export type CaseDataType = {
     disable_stattraks?: boolean;
   };
   id: string;
-  type: string;
+  type: string | null;
   name: string;
   description: string | null;
   image: string;
   contains: ItemType[];
   contains_rare: ItemType[];
-};
-
-export type ItemTypeLocalStorage = ItemType & {
-  casePrice?: number | null;
 };
 
 export type ItemTypeDB = InferSelectModel<typeof caseSimItems>;

@@ -4,12 +4,12 @@ import Link from "next/link";
 import Button from "./Button";
 import gradeColors from "@/utils/gradeColors";
 import { formatDecimal, formatPercentage } from "@/utils/formatters";
-import { GradeType, ItemTypeLocalStorage } from "@/types";
+import { GradeType, ItemType } from "@/types";
 
 type Props = {
   historyDialogRef: React.MutableRefObject<HTMLDialogElement | null>;
-  unboxedItems: ItemTypeLocalStorage[];
-  setUnboxedItems: React.Dispatch<React.SetStateAction<ItemTypeLocalStorage[]>>;
+  unboxedItems: ItemType[];
+  setUnboxedItems: React.Dispatch<React.SetStateAction<ItemType[]>>;
 };
 
 export default ({ historyDialogRef, unboxedItems, setUnboxedItems }: Props) => {
@@ -51,16 +51,6 @@ export default ({ historyDialogRef, unboxedItems, setUnboxedItems }: Props) => {
             <span className="font-semibold">
               {formatDecimal(unboxedItems.length * 2.35)}€ ($
               {formatDecimal(unboxedItems.length * 2.5)})
-            </span>
-          </span>
-
-          <span>
-            Case spend:{" "}
-            <span className="font-semibold">
-              ~$
-              {Math.round(
-                unboxedItems.reduce((a, b) => a + (b.casePrice ?? 0), 0),
-              ).toLocaleString("en")}
             </span>
           </span>
 
