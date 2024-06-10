@@ -84,7 +84,7 @@ export default ({
       {/* MODAL */}
       <dialog
         ref={dialogRef}
-        className="mx-auto w-full max-w-4xl border-[1px] border-white/30 bg-[#2d2d2d]/50 text-white backdrop-blur-xl backdrop:bg-black/30 backdrop:backdrop-blur-sm"
+        className="mx-auto w-full max-w-4xl bg-[#2d2d2d]/50 text-white backdrop-blur-xl backdrop:bg-black/30 backdrop:backdrop-blur"
       >
         <div className="flex flex-col">
           <div className="flex items-center justify-between bg-[#262626]/70 p-3 text-3xl font-semibold text-neutral-400">
@@ -170,6 +170,7 @@ export default ({
                     src={caseData.image}
                     style={{ height: 50 }}
                     loading="lazy"
+                    alt={caseData.name}
                   />
                   <div className="flex flex-col">
                     {caseData.name}
