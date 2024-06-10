@@ -3,7 +3,7 @@ import casesLocal from "@/lib/data/cases.json";
 import souvenirCasesLocal from "@/lib/data/souvenir.json";
 import customCasesLocal from "@/lib/data/customCases.json";
 import casesMetadata from "@/lib/data/allCasesMetadata.json"; // https://bymykel.github.io/CSGO-API/api/en/crates.json -> json.map(x => ({ id: x.id, name: x.name }))
-import CaseSelect from "@/components/CaseSelect";
+import CasePicker from "@/components/CasePicker";
 import AboutButtonWithModal from "@/components/AboutButtonWithModal";
 import UnlockButton from "@/components/UnlockButton";
 import Button from "@/components/Button";
@@ -100,7 +100,7 @@ export default async function Home({ searchParams }: PageProps) {
 
       {/* Header row */}
       <div className="mx-2 mt-2 flex flex-col-reverse justify-between gap-2 min-[800px]:flex-row">
-        <CaseSelect availableCases={caseMetadata} />
+        <CasePicker availableCases={caseMetadata} />
 
         <Button
           variant="secondary-darker"
