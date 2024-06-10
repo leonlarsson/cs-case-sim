@@ -38,6 +38,7 @@ export type CaseDataType = {
   id: string;
   type: string;
   name: string;
+  description: string | null;
   image: string;
   contains: ItemType[];
   contains_rare: ItemType[];

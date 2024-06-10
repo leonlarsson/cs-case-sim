@@ -70,6 +70,7 @@ export default async function Home({ searchParams }: PageProps) {
   const caseMetadata = casesData.map(x => ({
     id: x.id,
     name: x.name,
+    description: x.description,
     image: x.image,
   }));
 
