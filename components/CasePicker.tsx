@@ -123,7 +123,7 @@ export default ({
           <input
             type="search"
             placeholder="Search..."
-            className="m-2 mb-0 rounded px-2 py-1 text-lg outline-none"
+            className="m-2 mb-0 rounded bg-[#262626] px-2 py-1 text-lg focus:outline-none focus:ring-2 focus:ring-opacity-50"
             value={caseSearch}
             onChange={e => setCaseSearch(e.currentTarget.value)}
           />
