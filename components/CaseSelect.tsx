@@ -41,6 +41,9 @@ export default ({
     });
   };
 
+  const openModal = () => dialogRef.current?.showModal();
+  const closeModal = () => dialogRef.current?.close();
+
   const selectedCase =
     availableCases.find(x => x.id === caseParam) ?? availableCases[0];
 
@@ -52,7 +55,7 @@ export default ({
         playSoundOnClick={false}
         onClick={() => {
           playClick();
-          dialogRef.current?.showModal();
+          openModal();
         }}
       >
         <span className="whitespace-nowrap">{selectedCase.name}</span>
@@ -87,16 +90,17 @@ export default ({
           <div className="flex items-center justify-between bg-[#262626]/70 p-3 text-3xl font-semibold text-neutral-400">
             <div>
               Select a case!{" "}
-              <Button variant="secondary-darker">
+              <Button
+                variant="secondary-darker"
+                onClick={() => {
+                  selectCase();
+                  closeModal();
+                }}
+              >
                 <Icons.shuffle className="size-5" />
               </Button>
             </div>
-            <Button
-              variant="secondary-darker"
-              onClick={() => {
-                dialogRef.current?.close();
-              }}
-            >
+            <Button variant="secondary-darker" onClick={closeModal}>
               <Icons.xMark className="size-6" />
             </Button>
           </div>
@@ -124,7 +128,7 @@ export default ({
                       playSoundOnClick={false}
                       onClick={() => {
                         selectCase(caseData.id);
-                        dialogRef.current?.close();
+                        closeModal();
                       }}
                     >
                       <img
@@ -159,7 +163,7 @@ export default ({
                   playSoundOnClick={false}
                   onClick={() => {
                     selectCase(caseData.id);
-                    dialogRef.current?.close();
+                    closeModal();
                   }}
                 >
                   <img
@@ -187,7 +191,7 @@ export default ({
                   className="flex items-center gap-2"
                   onClick={() => {
                     selectCase();
-                    dialogRef.current?.close();
+                    closeModal();
                   }}
                 >
                   Random Case
