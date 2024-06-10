@@ -23,15 +23,22 @@ export default ({
     "/audio/caseselect.mp3",
   );
 
+  const [favoriteCases, setFavoriteCases] = useState<string[]>(
+    localStorage.getItem("favoriteCases")
+      ? JSON.parse(localStorage.getItem("favoriteCases")!)
+      : [],
+  );
+
   const featuredCases: Pick<
     CaseDataType,
     "id" | "name" | "description" | "image"
-  >[] = [];
+  >[] = [availableCases.find(x => x.id === "crate-4904")!];
 
   const selectCase = (id?: string) => {
     startTransition(() => {
       stopCaseSound();
       playCaseSound();
+      closeModal();
       router.replace(
         `/?case=${
           id ??
@@ -46,6 +53,20 @@ export default ({
 
   const selectedCase =
     availableCases.find(x => x.id === caseParam) ?? availableCases[0];
+
+  const toggleFavoriteCase = (id: string) => {
+    const index = favoriteCases.indexOf(id);
+    const newFavoriteCases = [...favoriteCases];
+
+    if (index === -1) {
+      newFavoriteCases.push(id);
+    } else {
+      newFavoriteCases.splice(index, 1);
+    }
+
+    setFavoriteCases(newFavoriteCases);
+    localStorage.setItem("favoriteCases", JSON.stringify(newFavoriteCases));
+  };
 
   return (
     <div className="flex gap-2">
@@ -90,13 +111,7 @@ export default ({
           <div className="flex items-center justify-between bg-[#262626]/70 p-3 text-3xl font-semibold text-neutral-400">
             <div>
               Select a case!{" "}
-              <Button
-                variant="secondary-darker"
-                onClick={() => {
-                  selectCase();
-                  closeModal();
-                }}
-              >
+              <Button variant="secondary-darker" onClick={selectCase}>
                 <Icons.shuffle className="size-5" />
               </Button>
             </div>
@@ -119,31 +134,46 @@ export default ({
             {featuredCases.length > 0 && (
               <>
                 <div>
-                  <span className="text-lg font-semibold">Featured Case:</span>
-                  {[availableCases[0]].map(caseData => (
-                    <Button
-                      key={caseData.id}
-                      variant="secondary-darker"
-                      className="flex w-full items-center gap-2 p-2 text-left backdrop-blur-md"
-                      playSoundOnClick={false}
-                      onClick={() => {
-                        selectCase(caseData.id);
-                        closeModal();
-                      }}
-                    >
-                      <img
-                        src={caseData.image}
-                        style={{ height: 50 }}
-                        loading="lazy"
+                  <span className="text-lg font-semibold">
+                    Featured {featuredCases.length > 1 ? "Cases" : "Case"}:
+                  </span>
+                  <div className="flex flex-col gap-2">
+                    {featuredCases.map(caseData => (
+                      <Case
+                        key={caseData.id}
+                        caseData={caseData}
+                        showToggleFavoriteButton
+                        isFavorite={favoriteCases.includes(caseData.id)}
+                        selectCase={selectCase}
+                        toggleFavoriteCase={toggleFavoriteCase}
                       />
-                      <div className="flex flex-col">
-                        {caseData.name}
-                        <span className="text-sm font-normal opacity-70">
-                          {caseData.description}
-                        </span>
-                      </div>
-                    </Button>
-                  ))}
+                    ))}
+                  </div>
+                </div>
+
+                <hr className="my-2" />
+              </>
+            )}
+
+            {/* Favorite cases */}
+            {favoriteCases.length > 0 && (
+              <>
+                <div>
+                  <span className="text-lg font-semibold">Favorites:</span>
+                  <div className="flex flex-col gap-2">
+                    {availableCases
+                      .filter(x => favoriteCases.includes(x.id))
+                      .map(caseData => (
+                        <Case
+                          key={caseData.id}
+                          caseData={caseData}
+                          showToggleFavoriteButton
+                          isFavorite={favoriteCases.includes(caseData.id)}
+                          selectCase={selectCase}
+                          toggleFavoriteCase={toggleFavoriteCase}
+                        />
+                      ))}
+                  </div>
                 </div>
 
                 <hr className="my-2" />
@@ -151,35 +181,32 @@ export default ({
             )}
 
             {/* All matching cases */}
-            {availableCases
-              .filter(x =>
-                x.name.toLowerCase().includes(caseSearch.toLowerCase()),
-              )
-              .map(caseData => (
-                <Button
-                  key={caseData.id}
-                  variant="secondary-darker"
-                  className="flex items-center gap-2 p-2 text-left backdrop-blur-md"
-                  playSoundOnClick={false}
-                  onClick={() => {
-                    selectCase(caseData.id);
-                    closeModal();
-                  }}
-                >
-                  <img
-                    src={caseData.image}
-                    style={{ height: 50 }}
-                    loading="lazy"
-                    alt={caseData.name}
-                  />
-                  <div className="flex flex-col">
-                    {caseData.name}
-                    <span className="text-sm font-normal opacity-70">
-                      {caseData.description}
-                    </span>
-                  </div>
-                </Button>
-              ))}
+            <div>
+              <span className="text-lg font-semibold">
+                {caseSearch
+                  ? `Non-favorite cases matching "${caseSearch}"`
+                  : "All Cases"}
+                :
+              </span>
+              <div className="flex flex-col gap-2">
+                {availableCases
+                  .filter(
+                    x =>
+                      x.name.toLowerCase().includes(caseSearch.toLowerCase()) &&
+                      !favoriteCases.includes(x.id),
+                  )
+                  .map(caseData => (
+                    <Case
+                      key={caseData.id}
+                      caseData={caseData}
+                      showToggleFavoriteButton
+                      isFavorite={favoriteCases.includes(caseData.id)}
+                      selectCase={selectCase}
+                      toggleFavoriteCase={toggleFavoriteCase}
+                    />
+                  ))}
+              </div>
+            </div>
 
             {/* No cases found */}
             {availableCases.filter(x =>
@@ -190,10 +217,7 @@ export default ({
                 <Button
                   variant="primary"
                   className="flex items-center gap-2"
-                  onClick={() => {
-                    selectCase();
-                    closeModal();
-                  }}
+                  onClick={selectCase}
                 >
                   Random Case
                   <Icons.shuffle />
@@ -203,6 +227,61 @@ export default ({
           </div>
         </div>
       </dialog>
+    </div>
+  );
+};
+
+const Case = ({
+  caseData,
+  showToggleFavoriteButton,
+  selectCase,
+  isFavorite,
+  toggleFavoriteCase,
+}: {
+  caseData: Pick<CaseDataType, "id" | "name" | "description" | "image">;
+  showToggleFavoriteButton?: boolean;
+  selectCase: (id: string) => void;
+  isFavorite: boolean;
+  toggleFavoriteCase: (id: string) => void;
+}) => {
+  return (
+    <div className="flex">
+      <Button
+        key={caseData.id}
+        variant="secondary-darker"
+        className={`flex flex-1 items-center gap-2 ${showToggleFavoriteButton ? "rounded-r-none" : ""} p-2 text-left backdrop-blur-md`}
+        playSoundOnClick={false}
+        onClick={() => {
+          selectCase(caseData.id);
+        }}
+      >
+        <img
+          src={caseData.image}
+          style={{ height: 50 }}
+          loading="lazy"
+          alt={caseData.name}
+        />
+        <div className="flex flex-col">
+          {caseData.name}
+          <span className="text-sm font-normal opacity-70">
+            {caseData.description}
+          </span>
+        </div>
+      </Button>
+
+      {showToggleFavoriteButton && (
+        <Button
+          variant="secondary-darker"
+          className="rounded-l-none p-2 backdrop-blur-md"
+          onClick={() => toggleFavoriteCase(caseData.id)}
+        >
+          {isFavorite ? (
+            <Icons.star className="text-yellow-500" />
+          ) : (
+            <Icons.hollowStar />
+          )}
+        </Button>
+      )}
     </div>
   );
 };
