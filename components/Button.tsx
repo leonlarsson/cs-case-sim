@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-// @ts-expect-error
-import useSound from "use-sound";
+import { AudioContext } from "./AudioContext";
+import { useContext } from "react";
 
 type Props = {
   variant: "primary" | "secondary" | "secondary-darker" | "danger";
@@ -24,9 +24,6 @@ export default ({
   onClick,
   children,
 }: Props) => {
-  const [playHover] = useSound("/audio/buttonhover.mp3");
-  const [playClick] = useSound("/audio/buttonclick.mp3");
-
   const className = {
     className: `select-none rounded p-3 text-lg font-semibold transition-colors duration-[40ms] disabled:bg-neutral-500 ${extraClassNames} ${
       variant === "primary" ? "bg-[#048b59] hover:bg-[#15b869]" : ""
@@ -35,25 +32,27 @@ export default ({
     } ${variant === "danger" ? "bg-red-500 hover:bg-red-500/50" : ""}`,
   };
 
+  const { buttonClickSound, buttonHoverSound } = useContext(AudioContext);
+
   return href ? (
     <Link
       href={href}
       target={openInNewTab ? "_blank" : undefined}
       className={className.className}
-      onMouseEnter={playHover}
-      onClick={playClick}
+      onMouseEnter={() => buttonHoverSound.play()}
+      onClick={() => buttonClickSound.play()}
     >
       {children}
     </Link>
   ) : (
     <button
       className={className.className}
-      onMouseEnter={playHover}
+      onMouseEnter={() => buttonHoverSound.play()}
       disabled={disabled}
       autoFocus={children === "RETRY"}
       onClick={() => {
         if (typeof onClick === "function") onClick();
-        if (playSoundOnClick) playClick();
+        if (playSoundOnClick) buttonClickSound.play();
       }}
     >
       {children}

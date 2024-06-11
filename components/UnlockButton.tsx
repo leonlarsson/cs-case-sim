@@ -1,8 +1,7 @@
 "use client";
 
-// @ts-expect-error
-import useSound from "use-sound";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import { AudioContext } from "./AudioContext";
 import UnboxedDialog from "./UnboxedDialog";
 import StatsAndHistoryDialog from "./StatsAndHistoryDialog";
 import Button from "./Button";
@@ -20,24 +19,14 @@ export default ({ caseData }: { caseData: CaseDataType }) => {
     [],
   );
 
-  const volume = 0.5;
-  const [playMilspec, { stop: stop1 }] = useSound("/audio/milspecopen.mp3", {
-    volume,
-  });
-  const [playResricted, { stop: stop2 }] = useSound(
-    "/audio/restrictedopen.mp3",
-    { volume },
-  );
-  const [playClassified, { stop: stop3 }] = useSound(
-    "/audio/classifiedopen.mp3",
-    { volume },
-  );
-  const [playCovert, { stop: stop4 }] = useSound("/audio/covertopen.mp3", {
-    volume,
-  });
-  const [playGold, { stop: stop5 }] = useSound("/audio/goldopen.mp3", {
-    volume,
-  });
+  const {
+    stopAllSounds,
+    milspecOpenSound,
+    restrictedOpenSound,
+    classifiedOpenSound,
+    covertOpenSound,
+    goldOpenSound,
+  } = useContext(AudioContext);
 
   // Load unboxed items from localStorage
   useEffect(() => {
@@ -88,12 +77,8 @@ export default ({ caseData }: { caseData: CaseDataType }) => {
       JSON.stringify([openedItem, ...unboxedItems]),
     );
 
-    // Stop all sounds and play sound based on item grade. Covert and gold missing
-    stop1();
-    stop2();
-    stop3();
-    stop4();
-    stop5();
+    // Stop all sounds and play sound based on item grade
+    stopAllSounds();
 
     // Play sound based on item grade
     if (
@@ -101,13 +86,13 @@ export default ({ caseData }: { caseData: CaseDataType }) => {
         openedItem.rarity.name,
       )
     )
-      playMilspec();
+      milspecOpenSound.play();
 
-    if (openedItem.rarity.name === "Restricted") playResricted();
-    if (openedItem.rarity.name === "Classified") playClassified();
+    if (openedItem.rarity.name === "Restricted") restrictedOpenSound.play();
+    if (openedItem.rarity.name === "Classified") classifiedOpenSound.play();
     if (openedItem.rarity.name === "Covert" && !openedItem.name.includes("★"))
-      playCovert();
-    if (openedItem.name.includes("★")) playGold();
+      covertOpenSound.play();
+    if (openedItem.name.includes("★")) goldOpenSound.play();
 
     // Disable the unlock button for 2 seconds if the item is a Covert or RSI
     if (openedItem.name.includes("★") || openedItem.rarity.name === "Covert") {

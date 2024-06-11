@@ -1,9 +1,9 @@
 "use client";
 
-// @ts-expect-error
-import useSound from "use-sound";
 import { GradeType, ItemType } from "@/types";
+import { AudioContext } from "./AudioContext";
 import Item from "./Item";
+import { useContext } from "react";
 
 type Props = {
   items: ItemType[];
@@ -11,7 +11,7 @@ type Props = {
 };
 
 export default ({ items, rareItems }: Props) => {
-  const [playHover] = useSound("/audio/itemhover.mp3");
+  const { itemHoverSound } = useContext(AudioContext);
 
   return (
     <>
@@ -22,7 +22,7 @@ export default ({ items, rareItems }: Props) => {
           skinName={item.name.split(" | ")[1]}
           image={item.image}
           grade={item.rarity.name as GradeType}
-          playHover={playHover}
+          playHover={() => itemHoverSound.play()}
         />
       ))}
 
@@ -36,7 +36,7 @@ export default ({ items, rareItems }: Props) => {
           image="/images/rsi-2.png"
           grade="Rare Special Item"
           isSpecial
-          playHover={playHover}
+          playHover={() => itemHoverSound.play()}
         />
       )}
     </>

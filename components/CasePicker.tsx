@@ -1,9 +1,8 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useContext, useRef, useState, useTransition } from "react";
+import { AudioContext } from "./AudioContext";
 import { useRouter, useSearchParams } from "next/navigation";
-// @ts-expect-error
-import useSound from "use-sound";
 import Button from "./Button";
 import Icons from "./icons";
 import { CaseDataType } from "@/types";
@@ -18,10 +17,8 @@ export default ({
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [pending, startTransition] = useTransition();
   const caseParam = useSearchParams().get("case");
-  const [playClick] = useSound("/audio/selectclick.mp3");
-  const [playCaseSound, { stop: stopCaseSound }] = useSound(
-    "/audio/caseselect.mp3",
-  );
+  const { buttonClickAlternativeSound, caseSelectSound } =
+    useContext(AudioContext);
 
   const [favoriteCases, setFavoriteCases] = useState<string[]>(
     localStorage.getItem("favoriteCases")
@@ -36,8 +33,8 @@ export default ({
 
   const selectCase = (id?: string) => {
     startTransition(() => {
-      stopCaseSound();
-      playCaseSound();
+      caseSelectSound.stop();
+      caseSelectSound.play();
       closeModal();
       router.replace(
         `/?case=${
@@ -75,7 +72,7 @@ export default ({
         className="flex w-full items-center justify-between gap-2 overflow-hidden py-0 text-center backdrop-blur-md min-[800px]:w-[540px]"
         playSoundOnClick={false}
         onClick={() => {
-          playClick();
+          buttonClickAlternativeSound.play();
           openModal();
         }}
       >
