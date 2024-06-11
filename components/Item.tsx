@@ -1,6 +1,7 @@
 "use client";
 
 import { GradeType } from "@/types";
+import { useAudio } from "./AudioProvider";
 import gradeColors from "@/utils/gradeColors";
 
 type Props = {
@@ -9,7 +10,6 @@ type Props = {
   image?: string;
   grade?: GradeType;
   isSpecial?: boolean;
-  playHover?: () => void;
 };
 
 export default ({
@@ -18,12 +18,13 @@ export default ({
   image,
   grade = "Mil-Spec Grade",
   isSpecial,
-  playHover,
 }: Props) => {
+  const { itemHoverSound } = useAudio();
+
   return (
     <div
       className="group flex w-44 flex-col gap-1 transition-all"
-      onMouseEnter={playHover}
+      onMouseEnter={() => itemHoverSound.play()}
     >
       <div
         className={`flex h-32 w-44 items-center justify-center border-b-[6px] bg-gradient-to-b from-neutral-600 to-neutral-400 shadow-md transition-all group-hover:shadow-lg group-hover:drop-shadow-lg`}

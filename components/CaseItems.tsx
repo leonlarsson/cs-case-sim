@@ -1,7 +1,4 @@
-"use client";
-
 import { GradeType, ItemType } from "@/types";
-import { useAudio } from "./AudioProvider";
 import Item from "./Item";
 
 type Props = {
@@ -10,8 +7,6 @@ type Props = {
 };
 
 export default ({ items, rareItems }: Props) => {
-  const { itemHoverSound } = useAudio();
-
   return (
     <>
       {items.map(item => (
@@ -21,7 +16,6 @@ export default ({ items, rareItems }: Props) => {
           skinName={item.name.split(" | ")[1]}
           image={item.image}
           grade={item.rarity.name as GradeType}
-          playHover={() => itemHoverSound.play()}
         />
       ))}
 
@@ -35,7 +29,6 @@ export default ({ items, rareItems }: Props) => {
           image="/images/rsi-2.png"
           grade="Rare Special Item"
           isSpecial
-          playHover={() => itemHoverSound.play()}
         />
       )}
     </>
