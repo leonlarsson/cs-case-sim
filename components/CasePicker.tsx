@@ -144,6 +144,7 @@ export default ({
                       <Case
                         key={caseData.id}
                         caseData={caseData}
+                        isCurrentCase={selectedCase.id === caseData.id}
                         showToggleFavoriteButton
                         isFavorite={favoriteCases.includes(caseData.id)}
                         selectCase={selectCase}
@@ -171,6 +172,7 @@ export default ({
                         <Case
                           key={caseData.id}
                           caseData={caseData}
+                          isCurrentCase={selectedCase.id === caseData.id}
                           showToggleFavoriteButton
                           isFavorite={favoriteCases.includes(caseData.id)}
                           selectCase={selectCase}
@@ -204,6 +206,7 @@ export default ({
                       key={caseData.id}
                       caseData={caseData}
                       isFavorite={favoriteCases.includes(caseData.id)}
+                      isCurrentCase={selectedCase.id === caseData.id}
                       showToggleFavoriteButton
                       selectCase={selectCase}
                       toggleFavoriteCase={toggleFavoriteCase}
@@ -238,12 +241,14 @@ export default ({
 const Case = ({
   caseData,
   isFavorite,
+  isCurrentCase,
   showToggleFavoriteButton,
   selectCase,
   toggleFavoriteCase,
 }: {
   caseData: CasePickerCaseType;
   isFavorite: boolean;
+  isCurrentCase?: boolean;
   showToggleFavoriteButton?: boolean;
   selectCase: (id: string) => void;
   toggleFavoriteCase: (id: string) => void;
@@ -266,8 +271,14 @@ const Case = ({
           alt={caseData.name}
         />
         <div className="flex flex-col">
-          <span className="inline-flex flex-wrap items-center gap-1">
-            {caseData.name}{" "}
+          <span className="inline-flex flex-wrap items-center gap-1 text-pretty">
+            {isCurrentCase && (
+              <Icons.check
+                className="text-green-500"
+                title="Currently selected."
+              />
+            )}
+            {caseData.name}
             {caseData.first_sale_date && (
               <span
                 className="text-sm font-normal tracking-wider opacity-70"
