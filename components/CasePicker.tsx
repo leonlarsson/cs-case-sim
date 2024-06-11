@@ -5,12 +5,12 @@ import { useAudio } from "./AudioProvider";
 import { useRouter, useSearchParams } from "next/navigation";
 import Button from "./Button";
 import Icons from "./icons";
-import { CaseDataType } from "@/types";
+import { CasePickerCaseType } from "@/types";
 
 export default ({
   availableCases,
 }: {
-  availableCases: Pick<CaseDataType, "id" | "name" | "description" | "image">[];
+  availableCases: CasePickerCaseType[];
 }) => {
   const router = useRouter();
   const [favoriteCases, setFavoriteCases] = useState<string[]>([]);
@@ -19,6 +19,13 @@ export default ({
   const [pending, startTransition] = useTransition();
   const caseParam = useSearchParams().get("case");
   const { buttonClickAlternativeSound, caseSelectSound } = useAudio();
+
+  const featuredCases: CasePickerCaseType[] = [
+    availableCases.find(x => x.id === "crate-4904")!,
+  ];
+
+  const selectedCase =
+    availableCases.find(x => x.id === caseParam) ?? availableCases[0];
 
   // Load favorite cases from localStorage on mount
   useEffect(() => {
@@ -30,11 +37,6 @@ export default ({
       setFavoriteCases([]);
     }
   }, []);
-
-  const featuredCases: Pick<
-    CaseDataType,
-    "id" | "name" | "description" | "image"
-  >[] = [availableCases.find(x => x.id === "crate-4904")!];
 
   const selectCase = (id?: string) => {
     startTransition(() => {
@@ -49,13 +51,8 @@ export default ({
       );
     });
   };
-
   const openModal = () => dialogRef.current?.showModal();
   const closeModal = () => dialogRef.current?.close();
-
-  const selectedCase =
-    availableCases.find(x => x.id === caseParam) ?? availableCases[0];
-
   const toggleFavoriteCase = (id: string) => {
     const index = favoriteCases.indexOf(id);
     const newFavoriteCases = [...favoriteCases];
@@ -136,9 +133,7 @@ export default ({
             {featuredCases.length > 0 && (
               <>
                 <div>
-                  <span className="text-lg font-semibold">
-                    Featured {featuredCases.length > 1 ? "Cases" : "Case"}:
-                  </span>
+                  <span className="text-lg font-semibold">Featured:</span>
                   <div className="flex flex-col gap-2">
                     {featuredCases.map(caseData => (
                       <Case
@@ -186,8 +181,8 @@ export default ({
             <div>
               <span className="text-lg font-semibold">
                 {caseSearch
-                  ? `Non-favorite cases matching "${caseSearch}"`
-                  : "All Cases"}
+                  ? `Non-favorites matching "${caseSearch}"`
+                  : "All cases"}
                 :
               </span>
               <div className="flex flex-col gap-2">
@@ -201,8 +196,8 @@ export default ({
                     <Case
                       key={caseData.id}
                       caseData={caseData}
-                      showToggleFavoriteButton
                       isFavorite={favoriteCases.includes(caseData.id)}
+                      showToggleFavoriteButton
                       selectCase={selectCase}
                       toggleFavoriteCase={toggleFavoriteCase}
                     />
@@ -235,15 +230,15 @@ export default ({
 
 const Case = ({
   caseData,
+  isFavorite,
   showToggleFavoriteButton,
   selectCase,
-  isFavorite,
   toggleFavoriteCase,
 }: {
-  caseData: Pick<CaseDataType, "id" | "name" | "description" | "image">;
+  caseData: CasePickerCaseType;
+  isFavorite: boolean;
   showToggleFavoriteButton?: boolean;
   selectCase: (id: string) => void;
-  isFavorite: boolean;
   toggleFavoriteCase: (id: string) => void;
 }) => {
   return (
@@ -264,7 +259,17 @@ const Case = ({
           alt={caseData.name}
         />
         <div className="flex flex-col">
-          {caseData.name}
+          <span className="inline-flex flex-wrap items-center gap-1">
+            {caseData.name}{" "}
+            {caseData.first_sale_date && (
+              <span
+                className="text-sm font-normal tracking-wider opacity-70"
+                title={`Fist sale: ${caseData.first_sale_date}`}
+              >
+                ({caseData.first_sale_date.substring(0, 4)})
+              </span>
+            )}
+          </span>
           <span className="text-sm font-normal opacity-70">
             {caseData.description}
           </span>

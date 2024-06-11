@@ -28,7 +28,7 @@ export type GradeType =
   | "Rare Special Item";
 
 export type CaseDataType = {
-  /** Extra properties from custom case API */
+  /** Extra properties from custom cases */
   extra?: {
     // Case gold chance (0-1)
     gold_chance?: number;
@@ -37,11 +37,17 @@ export type CaseDataType = {
   };
   id: string;
   type: string | null;
+  first_sale_date: string | null;
   name: string;
   description: string | null;
   image: string;
   contains: ItemType[];
   contains_rare: ItemType[];
 };
+
+export type CasePickerCaseType = Pick<
+  CaseDataType,
+  "id" | "name" | "description" | "image" | "first_sale_date"
+>;
 
 export type ItemTypeDB = InferSelectModel<typeof caseSimItems>;

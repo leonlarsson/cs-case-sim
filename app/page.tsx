@@ -6,11 +6,12 @@ import CasePicker from "@/components/CasePicker";
 import AboutButtonWithModal from "@/components/AboutButtonWithModal";
 import UnlockButton from "@/components/UnlockButton";
 import Button from "@/components/Button";
-import { CaseDataType } from "@/types";
+import { CaseDataType, CasePickerCaseType } from "@/types";
 import CaseItems from "@/components/CaseItems";
 
 // Just get the metadata for the cases
-const casesMetadata = [
+// Used in the CasePicker component and for the page title
+const casesMetadata: CasePickerCaseType[] = [
   ...casesLocal,
   ...customCasesLocal,
   ...souvenirCasesLocal,
@@ -19,6 +20,7 @@ const casesMetadata = [
   name: x.name,
   description: x.description,
   image: x.image,
+  first_sale_date: x.first_sale_date,
 }));
 
 type PageProps = {
