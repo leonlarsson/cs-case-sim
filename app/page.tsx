@@ -12,9 +12,9 @@ import CaseItems from "@/components/CaseItems";
 // Just get the metadata for the cases
 // Used in the CasePicker component and for the page title
 const casesMetadata: CasePickerCaseType[] = [
-  ...casesLocal,
+  ...casesLocal.toReversed(),
   ...customCasesLocal,
-  ...souvenirCasesLocal,
+  ...souvenirCasesLocal.toReversed(),
 ].map(x => ({
   id: x.id,
   name: x.name,
@@ -62,6 +62,8 @@ export default async function Home({ searchParams }: PageProps) {
   // const [cases, souvenirPackages] = await Promise.all(promises);
 
   // Combine the case data arrays
+  // This is not visual at all, so the order doesn't matter
+  // The only place where the order matters is in the CasePicker component, which uses the casesMetadata array above
   const casesData: CaseDataType[] = [
     // ...cases,
     ...casesLocal,
@@ -71,7 +73,8 @@ export default async function Home({ searchParams }: PageProps) {
   ];
 
   const selectedCase =
-    casesData.find(x => x.id === selectedCaseParam) ?? casesData[0];
+    casesData.find(x => x.id === (selectedCaseParam ?? "crate-4904")) ??
+    casesData[0];
 
   return (
     <main id="main" className="relative flex min-h-screen select-none flex-col">

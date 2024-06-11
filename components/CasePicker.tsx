@@ -24,8 +24,11 @@ export default ({
     availableCases.find(x => x.id === "crate-4904")!,
   ];
 
+  // Select the case based on the URL parameter
+  // If the case is not found, select the Kilowatt case, but fall back to index 0
   const selectedCase =
-    availableCases.find(x => x.id === caseParam) ?? availableCases[0];
+    availableCases.find(x => x.id === (caseParam ?? "crate-4904")) ??
+    availableCases[0];
 
   // Load favorite cases from localStorage on mount
   useEffect(() => {
@@ -133,7 +136,9 @@ export default ({
             {featuredCases.length > 0 && (
               <>
                 <div>
-                  <span className="text-lg font-semibold">Featured:</span>
+                  <span className="text-lg font-semibold">
+                    Featured {featuredCases.length > 1 ? "cases" : "case"}:
+                  </span>
                   <div className="flex flex-col gap-2">
                     {featuredCases.map(caseData => (
                       <Case
@@ -156,7 +161,9 @@ export default ({
             {favoriteCases.length > 0 && (
               <>
                 <div>
-                  <span className="text-lg font-semibold">Favorites:</span>
+                  <span className="text-lg font-semibold">
+                    Favorite {favoriteCases.length > 1 ? "cases" : "case"}:
+                  </span>
                   <div className="flex flex-col gap-2">
                     {availableCases
                       .filter(x => favoriteCases.includes(x.id))
