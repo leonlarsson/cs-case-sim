@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useRef, useState, useTransition } from "react";
+import { useContext, useEffect, useRef, useState, useTransition } from "react";
 import { AudioContext } from "./AudioContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import Button from "./Button";
@@ -13,6 +13,7 @@ export default ({
   availableCases: Pick<CaseDataType, "id" | "name" | "description" | "image">[];
 }) => {
   const router = useRouter();
+  const [favoriteCases, setFavoriteCases] = useState<string[]>([]);
   const [caseSearch, setCaseSearch] = useState("");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [pending, startTransition] = useTransition();
@@ -20,11 +21,16 @@ export default ({
   const { buttonClickAlternativeSound, caseSelectSound } =
     useContext(AudioContext);
 
-  const [favoriteCases, setFavoriteCases] = useState<string[]>(
-    localStorage.getItem("favoriteCases")
-      ? JSON.parse(localStorage.getItem("favoriteCases")!)
-      : [],
-  );
+  // Load favorite cases from localStorage on mount
+  useEffect(() => {
+    try {
+      setFavoriteCases(
+        JSON.parse(localStorage.getItem("favoriteCases") || "[]"),
+      );
+    } catch (error) {
+      setFavoriteCases([]);
+    }
+  }, []);
 
   const featuredCases: Pick<
     CaseDataType,
