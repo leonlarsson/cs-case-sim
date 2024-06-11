@@ -1,9 +1,8 @@
 "use client";
 
 import { GradeType, ItemType } from "@/types";
-import { AudioContext } from "./AudioContext";
+import { useAudio } from "./AudioProvider";
 import Item from "./Item";
-import { useContext } from "react";
 
 type Props = {
   items: ItemType[];
@@ -11,7 +10,7 @@ type Props = {
 };
 
 export default ({ items, rareItems }: Props) => {
-  const { itemHoverSound } = useContext(AudioContext);
+  const { itemHoverSound } = useAudio();
 
   return (
     <>

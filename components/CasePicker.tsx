@@ -1,7 +1,7 @@
 "use client";
 
-import { useContext, useEffect, useRef, useState, useTransition } from "react";
-import { AudioContext } from "./AudioContext";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { useAudio } from "./AudioProvider";
 import { useRouter, useSearchParams } from "next/navigation";
 import Button from "./Button";
 import Icons from "./icons";
@@ -18,8 +18,7 @@ export default ({
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [pending, startTransition] = useTransition();
   const caseParam = useSearchParams().get("case");
-  const { buttonClickAlternativeSound, caseSelectSound } =
-    useContext(AudioContext);
+  const { buttonClickAlternativeSound, caseSelectSound } = useAudio();
 
   // Load favorite cases from localStorage on mount
   useEffect(() => {

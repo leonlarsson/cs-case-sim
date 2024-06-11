@@ -1,9 +1,10 @@
-import BackgroundImage from "@/components/BackgroundImage";
-import "./globals.css";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import BackgroundImage from "@/components/BackgroundImage";
+import AudioProvider from "@/components/AudioProvider";
+import "./globals.css";
 
 const stratumFont = localFont({
   src: [
@@ -54,7 +55,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${stratumFont.className} text-white`}>
         <BackgroundImage />
-        {children}
+        <AudioProvider>{children}</AudioProvider>
         <Analytics scriptSrc="/va/script.js" />
         <SpeedInsights scriptSrc="/si/script.js" />
       </body>

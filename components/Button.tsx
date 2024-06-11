@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
-import { AudioContext } from "./AudioContext";
-import { useContext } from "react";
+import { useAudio } from "./AudioProvider";
 
 type Props = {
   variant: "primary" | "secondary" | "secondary-darker" | "danger";
@@ -32,7 +31,7 @@ export default ({
     } ${variant === "danger" ? "bg-red-500 hover:bg-red-500/50" : ""}`,
   };
 
-  const { buttonClickSound, buttonHoverSound } = useContext(AudioContext);
+  const { buttonClickSound, buttonHoverSound } = useAudio();
 
   return href ? (
     <Link

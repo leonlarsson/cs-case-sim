@@ -1,7 +1,7 @@
 "use client";
 
-import { useContext, useEffect, useRef, useState } from "react";
-import { AudioContext } from "./AudioContext";
+import { useEffect, useRef, useState } from "react";
+import { useAudio } from "./AudioProvider";
 import UnboxedDialog from "./UnboxedDialog";
 import StatsAndHistoryDialog from "./StatsAndHistoryDialog";
 import Button from "./Button";
@@ -26,7 +26,7 @@ export default ({ caseData }: { caseData: CaseDataType }) => {
     classifiedOpenSound,
     covertOpenSound,
     goldOpenSound,
-  } = useContext(AudioContext);
+  } = useAudio();
 
   // Load unboxed items from localStorage
   useEffect(() => {

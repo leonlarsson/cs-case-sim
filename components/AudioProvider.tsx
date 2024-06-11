@@ -1,5 +1,7 @@
+"use client";
+
 import { Howl, Howler } from "howler";
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 
 const unboxVolume = 0.5;
 
@@ -50,7 +52,7 @@ const goldOpenSound = new Howl({
 
 const stopAllSounds = () => Howler.stop();
 
-export const AudioContext = createContext({
+const contextValues = {
   buttonHoverSound,
   buttonClickSound,
   itemHoverSound,
@@ -62,4 +64,16 @@ export const AudioContext = createContext({
   covertOpenSound,
   goldOpenSound,
   stopAllSounds,
-});
+};
+
+const AudioContext = createContext(contextValues);
+
+export default ({ children }: { children: React.ReactNode }) => {
+  return (
+    <AudioContext.Provider value={contextValues}>
+      {children}
+    </AudioContext.Provider>
+  );
+};
+
+export const useAudio = () => useContext(AudioContext);
