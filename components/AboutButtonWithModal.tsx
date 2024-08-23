@@ -32,7 +32,7 @@ export default () => {
             </p>
 
             <p>
-              Too see a list of the last items unboxed by the entire community,
+              To see a list of the last items unboxed by the entire community,
               go{" "}
               <Link className="font-semibold hover:underline" href="/unboxed">
                 here
