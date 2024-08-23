@@ -44,7 +44,7 @@ export default () => {
               The creator of this website can be found{" "}
               <Link
                 className="font-semibold hover:underline"
-                href="https://twitter.com/MozzyFX"
+                href="https://x.com/MozzyFX"
                 target="_blank"
               >
                 here
