@@ -62,6 +62,11 @@ export default ({ caseId }: { caseId: string }) => {
   const openCase = async (dontOpenDialog?: boolean) => {
     setUnlockButtonDisabled(true);
     const openedItem = await unboxCase(caseId);
+    if (!openedItem) {
+      alert("Error unboxing item: Invalid case ID");
+      setUnlockButtonDisabled(false);
+      return;
+    }
 
     // If the item is Covert or RSI, wait for 2 seconds before enabling the unlock button
     if (openedItem.name.includes("★") || openedItem.rarity.name === "Covert") {

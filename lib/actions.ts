@@ -51,9 +51,12 @@ const dataSchema = z.object({
 });
 
 // Gets a case from the provided caseId, unboxes an item, adds the item to DB, and returns the unboxed item
-export const unboxCase = async (caseId: string): Promise<ItemType> => {
+export const unboxCase = async (caseId: string): Promise<ItemType | false> => {
   const caseData = casesData.find(x => x.id === caseId);
-  if (!caseData) throw new Error("Case not found");
+  if (!caseData) {
+    console.error(`unboxCase: Case id ${caseId} not found`);
+    return false;
+  }
 
   const openedItem = getItem(caseData);
 
@@ -65,14 +68,15 @@ export const unboxCase = async (caseId: string): Promise<ItemType> => {
   return openedItem;
 };
 
+// Adds a single item to the database
 export const addItemToDB = async (
   caseData: CaseDataType,
   itemData: ItemType,
 ): Promise<boolean> => {
-  // Validate data - not tested because function is unused
+  // Validate data
   const zodReturn = dataSchema.safeParse({ caseData, itemData });
   if (!zodReturn.success) {
-    console.log("addItemToDB: Error validating data:", zodReturn.error);
+    console.error("addItemToDB: Error validating data:", zodReturn.error);
     return false;
   }
 
@@ -108,6 +112,7 @@ export const addItemToDB = async (
   }
 };
 
+// Adds multiple items to the database
 export const addItemsToDB = async (
   data: {
     caseData: { id: string; name: string; image: string };
@@ -117,7 +122,7 @@ export const addItemsToDB = async (
   // Validate data
   const zodReturn = z.array(dataSchema).safeParse(data);
   if (!zodReturn.success) {
-    console.log("addItemsToDB: Error validating data:", zodReturn.error);
+    console.error("addItemsToDB: Error validating data:", zodReturn.error);
     return false;
   }
 
@@ -167,7 +172,7 @@ export const getItemsFromDB = async (
 
     return rows;
   } catch (error) {
-    console.log("Error getting items:", error);
+    console.error("Error getting items:", error);
     return false;
   }
 };
@@ -193,7 +198,7 @@ export const getTotalItemsFromDB = async (
 
     return totalItems[0].value ?? 0;
   } catch (error) {
-    console.log("Error getting total items:", error);
+    console.error("Error getting total items:", error);
     return false;
   }
 };
