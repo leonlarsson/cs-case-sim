@@ -15,6 +15,7 @@ const itemIsStatTrak = (caseData: CaseDataType, item: ItemType): boolean => {
   );
 };
 
+// This function is currently exclusively called on the server side
 export default (caseData: CaseDataType): ItemType => {
   // This is pretty hacky. If the case is of type "Case", use the grade odds for cases. Otherwise, use the grade odds for souvenir packages.
   const gradeOdds =

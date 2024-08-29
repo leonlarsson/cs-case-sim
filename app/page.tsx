@@ -163,7 +163,7 @@ export default async function Home({ searchParams }: PageProps) {
           </span>
 
           <div className="flex flex-wrap items-center gap-2">
-            <UnlockButton caseData={selectedCase} />
+            <UnlockButton caseId={selectedCase.id} />
 
             <div className="mx-2 h-16 w-px bg-white/50" />
 

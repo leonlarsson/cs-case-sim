@@ -2,12 +2,22 @@
 
 import { cookies } from "next/headers";
 import { z } from "zod";
+import { waitUntil } from "@vercel/functions";
 import { and, count, desc, eq, inArray, max } from "drizzle-orm";
 import { CaseDataType, ItemType, ItemTypeDB } from "@/types";
 import db from "@/db";
 import { caseSimItems } from "@/db/schema";
 import getItem from "@/utils/getItem";
-import { waitUntil } from "@vercel/functions";
+import casesLocal from "@/lib/data/cases.json";
+import souvenirCasesLocal from "@/lib/data/souvenir.json";
+import customCasesLocal from "@/lib/data/customCases.json";
+
+// Get cases on the server to prevent changing the data on the client before it's sent to the server
+const casesData: CaseDataType[] = [
+  ...casesLocal,
+  ...customCasesLocal,
+  ...souvenirCasesLocal,
+];
 
 const dataSchema = z.object({
   caseData: z.object({
@@ -39,6 +49,21 @@ const dataSchema = z.object({
       ),
   }),
 });
+
+// Gets a case from the provided caseId, unboxes an item, adds the item to DB, and returns the unboxed item
+export const unboxCase = async (caseId: string): Promise<ItemType> => {
+  const caseData = casesData.find(x => x.id === caseId);
+  if (!caseData) throw new Error("Case not found");
+
+  const openedItem = getItem(caseData);
+
+  // Add item to DB if it's not a custom case
+  if (!caseData.id.startsWith("crate-custom")) {
+    waitUntil(addItemToDB(caseData, openedItem));
+  }
+
+  return openedItem;
+};
 
 export const addItemToDB = async (
   caseData: CaseDataType,
@@ -201,15 +226,3 @@ export const getOrCreateUnboxerIdCookie = async (): Promise<string> => {
 
 const itemIsCovert = inArray(caseSimItems.rarity, ["Covert", "Extraordinary"]);
 const itemIsPersonal = (id: string) => eq(caseSimItems.unboxerId, id);
-
-// Gets a case from the provided caseData, adds the item to DB, and returns the unboxed item
-export const unboxCase = async (caseData: CaseDataType): Promise<ItemType> => {
-  const openedItem = getItem(caseData);
-
-  // Add item to DB if it's not a custom case
-  if (!caseData.id.startsWith("crate-custom")) {
-    waitUntil(addItemToDB(caseData, openedItem));
-  }
-
-  return openedItem;
-};

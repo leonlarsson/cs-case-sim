@@ -5,10 +5,10 @@ import { useAudio } from "./AudioProvider";
 import UnboxedDialog from "./UnboxedDialog";
 import StatsAndHistoryDialog from "./StatsAndHistoryDialog";
 import Button from "./Button";
-import { CaseDataType, ItemType } from "@/types";
+import { ItemType } from "@/types";
 import { unboxCase } from "@/lib/actions";
 
-export default ({ caseData }: { caseData: CaseDataType }) => {
+export default ({ caseId }: { caseId: string }) => {
   const [unboxedItems, setUnboxedItems] = useState<ItemType[]>([]);
   const [unboxedItem, setUnboxedItem] = useState<ItemType | null>(null);
   const [unlockButtonDisabled, setUnlockButtonDisabled] = useState(false);
@@ -61,7 +61,7 @@ export default ({ caseData }: { caseData: CaseDataType }) => {
 
   const openCase = async (dontOpenDialog?: boolean) => {
     setUnlockButtonDisabled(true);
-    const openedItem = await unboxCase(caseData);
+    const openedItem = await unboxCase(caseId);
 
     // If the item is Covert or RSI, wait for 2 seconds before enabling the unlock button
     if (openedItem.name.includes("★") || openedItem.rarity.name === "Covert") {
