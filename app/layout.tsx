@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import BackgroundImage from "@/components/BackgroundImage";
 import AudioProvider from "@/components/AudioProvider";
 import "./globals.css";
@@ -56,8 +54,6 @@ export default function RootLayout({
       <body className={`${stratumFont.className} text-white`}>
         <BackgroundImage />
         <AudioProvider>{children}</AudioProvider>
-        <Analytics scriptSrc="/va/script.js" />
-        <SpeedInsights scriptSrc="/si/script.js" />
       </body>
     </html>
   );
