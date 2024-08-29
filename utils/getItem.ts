@@ -1,4 +1,3 @@
-import { MutableRefObject } from "react";
 import { gradeOddsCase, gradeOddsSouvenir } from "./gradeOdds";
 import { CaseDataType, GradeType, ItemType } from "@/types";
 
@@ -16,15 +15,7 @@ const itemIsStatTrak = (caseData: CaseDataType, item: ItemType): boolean => {
   );
 };
 
-export default (
-  caseData: CaseDataType,
-  itemBuffer: MutableRefObject<
-    {
-      caseData: CaseDataType;
-      itemData: ItemType;
-    }[]
-  >,
-): ItemType => {
+export default (caseData: CaseDataType): ItemType => {
   // This is pretty hacky. If the case is of type "Case", use the grade odds for cases. Otherwise, use the grade odds for souvenir packages.
   const gradeOdds =
     caseData.type === "Case" ? gradeOddsCase : gradeOddsSouvenir;
@@ -65,14 +56,6 @@ export default (
         // If souvenir package, add the "Souvenir" prefix
         if (caseData.type === "Souvenir") {
           unboxedItem.name = `Souvenir ${unboxedItem.name}`;
-        }
-
-        // Add the item to the item buffer if it's not a custom case
-        if (!caseData.id.startsWith("crate-custom")) {
-          itemBuffer.current = [
-            ...itemBuffer.current,
-            { caseData, itemData: unboxedItem },
-          ];
         }
 
         // Return the item

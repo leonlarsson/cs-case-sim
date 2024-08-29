@@ -6,6 +6,8 @@ import { and, count, desc, eq, inArray, max } from "drizzle-orm";
 import { CaseDataType, ItemType, ItemTypeDB } from "@/types";
 import db from "@/db";
 import { caseSimItems } from "@/db/schema";
+import getItem from "@/utils/getItem";
+import { waitUntil } from "@vercel/functions";
 
 const dataSchema = z.object({
   caseData: z.object({
@@ -199,3 +201,15 @@ export const getOrCreateUnboxerIdCookie = async (): Promise<string> => {
 
 const itemIsCovert = inArray(caseSimItems.rarity, ["Covert", "Extraordinary"]);
 const itemIsPersonal = (id: string) => eq(caseSimItems.unboxerId, id);
+
+// Gets a case from the provided caseData, adds the item to DB, and returns the unboxed item
+export const unboxCase = async (caseData: CaseDataType): Promise<ItemType> => {
+  const openedItem = getItem(caseData);
+
+  // Add item to DB if it's not a custom case
+  if (!caseData.id.startsWith("crate-custom")) {
+    waitUntil(addItemToDB(caseData, openedItem));
+  }
+
+  return openedItem;
+};
