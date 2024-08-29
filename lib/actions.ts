@@ -6,7 +6,7 @@ import { waitUntil } from "@vercel/functions";
 import { and, count, desc, eq, inArray, max } from "drizzle-orm";
 import { CaseDataType, ItemType, ItemTypeDB } from "@/types";
 import db from "@/db";
-import { caseSimItems } from "@/db/schema";
+import { items } from "@/db/schema";
 import getItem from "@/utils/getItem";
 import casesLocal from "@/lib/data/cases.json";
 import souvenirCasesLocal from "@/lib/data/souvenir.json";
@@ -93,7 +93,7 @@ export const addItemToDB = async (
   } = itemData;
 
   try {
-    await db.insert(caseSimItems).values({
+    await db.insert(items).values({
       caseId,
       caseName,
       caseImage,
@@ -130,7 +130,7 @@ export const addItemsToDB = async (
   const unboxerId = await getOrCreateUnboxerIdCookie();
 
   try {
-    await db.insert(caseSimItems).values(
+    await db.insert(items).values(
       data.map(item => ({
         caseId: item.caseData.id,
         caseName: item.caseData.name,
@@ -158,7 +158,7 @@ export const getItemsFromDB = async (
   try {
     const rows = await db
       .select()
-      .from(caseSimItems)
+      .from(items)
       .where(
         and(
           onlyCoverts ? itemIsCovert : undefined,
@@ -167,7 +167,7 @@ export const getItemsFromDB = async (
             : undefined,
         ),
       )
-      .orderBy(desc(caseSimItems.id))
+      .orderBy(desc(items.id))
       .limit(100);
 
     return rows;
@@ -184,9 +184,9 @@ export const getTotalItemsFromDB = async (
   try {
     const totalItems = await db
       .select({
-        value: onlyCoverts || onlyPersonal ? count() : max(caseSimItems.id),
+        value: onlyCoverts || onlyPersonal ? count() : max(items.id),
       })
-      .from(caseSimItems)
+      .from(items)
       .where(
         and(
           onlyCoverts ? itemIsCovert : undefined,
@@ -229,5 +229,5 @@ export const getOrCreateUnboxerIdCookie = async (): Promise<string> => {
   return newUnboxerId;
 };
 
-const itemIsCovert = inArray(caseSimItems.rarity, ["Covert", "Extraordinary"]);
-const itemIsPersonal = (id: string) => eq(caseSimItems.unboxerId, id);
+const itemIsCovert = inArray(items.rarity, ["Covert", "Extraordinary"]);
+const itemIsPersonal = (id: string) => eq(items.unboxerId, id);

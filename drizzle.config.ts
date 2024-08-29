@@ -4,7 +4,7 @@ export default defineConfig({
   dialect: "mysql",
   schema: "./db/schema.ts",
   migrations: {
-    table: "case_sim_items_migrations",
+    table: "case_sim_migrations",
   },
   dbCredentials: {
     url: process.env.DATABASE_URL!.replace(
@@ -12,7 +12,7 @@ export default defineConfig({
       '?ssl={"rejectUnauthorized":true}',
     ),
   },
-  tablesFilter: ["case_sim_items"],
+  tablesFilter: ["case_sim_*"],
   // Print all statements
   verbose: true,
   // Always ask for confirmation

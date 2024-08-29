@@ -8,7 +8,10 @@ import {
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
-export const caseSimItems = mysqlTable(
+// To update the DB, modify this file and run "npm run db:push".
+// This is because I don't use migrations yet because this schema already exists in the DB, and I can't add indexes easily because they already exist.
+// To watch: --no-init: https://github.com/drizzle-team/drizzle-orm/discussions/2624
+export const items = mysqlTable(
   "case_sim_items",
   {
     id: int("id").autoincrement().notNull(),
@@ -29,6 +32,7 @@ export const caseSimItems = mysqlTable(
     return {
       idxRarity: index("idx_rarity").on(table.rarity),
       idxUnboxerId: index("idx_unboxer_id").on(table.unboxerId),
+      idxUnboxedAt: index("idx_unboxed_at").on(table.unboxedAt),
       caseSimItemsId: primaryKey({
         columns: [table.id],
         name: "case_sim_items_id",
