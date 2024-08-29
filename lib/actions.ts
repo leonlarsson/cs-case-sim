@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { z } from "zod";
 import { waitUntil } from "@vercel/functions";
-import { and, count, desc, eq, inArray, max } from "drizzle-orm";
+import { and, count, desc, eq, inArray, max, sql } from "drizzle-orm";
 import { CaseDataType, ItemType, ItemTypeDB } from "@/types";
 import db from "@/db";
 import { items } from "@/db/schema";
@@ -199,6 +199,22 @@ export const getTotalItemsFromDB = async (
     return totalItems[0].value ?? 0;
   } catch (error) {
     console.error("Error getting total items:", error);
+    return false;
+  }
+};
+
+export const getTotalItemsFromDBLast24Hours = async () => {
+  try {
+    const totalItems = await db
+      .select({
+        value: count(),
+      })
+      .from(items)
+      .where(sql`unboxed_at >= NOW() - INTERVAL 24 HOUR`);
+
+    return totalItems[0].value ?? 0;
+  } catch (error) {
+    console.error("Error getting total items from last 24 hours:", error);
     return false;
   }
 };

@@ -5,7 +5,10 @@ import SettingsCheckboxes from "@/components/SettingsCheckboxes";
 import GlobalItemHistory from "@/components/GlobalItemHistory";
 import Button from "@/components/Button";
 import Icons from "@/components/icons";
-import { getTotalItemsFromDB } from "@/lib/actions";
+import {
+  getTotalItemsFromDB,
+  getTotalItemsFromDBLast24Hours,
+} from "@/lib/actions";
 import { formatDecimal } from "@/utils/formatters";
 
 export const metadata = {
@@ -37,7 +40,14 @@ export default ({
           )}
         </span>
 
-        <Suspense fallback={<span className="text-center">Loading...</span>}>
+        <Suspense
+          fallback={
+            <span className="text-center">
+              Loading... <br />
+              Loading...
+            </span>
+          }
+        >
           <TotalSpend
             onlyCoverts={onlyCoverts === "true"}
             onlyPersonal={onlyPersonal === "true"}
@@ -81,23 +91,38 @@ const TotalSpend = async ({
   onlyCoverts: boolean;
   onlyPersonal: boolean;
 }) => {
-  const totalUnboxed = await getTotalItemsFromDB(onlyCoverts, onlyPersonal);
-  if (totalUnboxed === false) return null;
+  const [totalUnboxed, totalUnboxed24h] = await Promise.all([
+    getTotalItemsFromDB(onlyCoverts, onlyPersonal),
+    getTotalItemsFromDBLast24Hours(),
+  ]);
+  if (totalUnboxed === false || totalUnboxed24h === false) return null;
 
   return (
     <span className="text-center">
-      <span className="font-medium tracking-wide">
-        {totalUnboxed.toLocaleString("en")}
-      </span>{" "}
-      {onlyCoverts ? "coverts" : "items"} unboxed.{" "}
-      <span
-        className="font-medium tracking-wide"
-        title={`That's $${formatDecimal(totalUnboxed * 2.5)}`}
-      >
-        {formatDecimal(totalUnboxed * 2.35)}€
-      </span>{" "}
-      spent on imaginary keys.
+      <span>
+        <span className="font-medium tracking-wide">
+          {totalUnboxed.toLocaleString("en")}
+        </span>{" "}
+        {onlyCoverts ? "coverts" : "items"} unboxed.{" "}
+        <span
+          className="font-medium tracking-wide"
+          title={`That's $${formatDecimal(totalUnboxed * 2.5)}`}
+        >
+          {formatDecimal(totalUnboxed * 2.35)}€
+        </span>{" "}
+        spent on imaginary keys.
+      </span>
+
       <RefreshButton />
+
+      <br />
+
+      <span title="All items, regardless of rarity.">
+        <span className="font-medium tracking-wide">
+          {totalUnboxed24h.toLocaleString("en")}
+        </span>{" "}
+        items unboxed in the last 24 hours.
+      </span>
     </span>
   );
 };
