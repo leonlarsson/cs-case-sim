@@ -7,9 +7,9 @@ const deleteOldNonCovertItems = async (batchSize: number) => {
     return;
   }
 
-  // Query to delete items older than 1 month that are not covert items
+  // Query to delete items older than 2 weeks that are not covert items
   const query =
-    "DELETE FROM case_sim_items WHERE unboxed_at < DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH) AND rarity NOT IN ('Covert', 'Extraordinary') LIMIT ?";
+    "DELETE FROM case_sim_items WHERE unboxed_at < DATE_SUB(CURRENT_DATE, INTERVAL 2 WEEK) AND rarity NOT IN ('Covert', 'Extraordinary') LIMIT ?";
 
   let totalRowsDeleted = 0;
   const operationStart = performance.now();
