@@ -210,7 +210,7 @@ export const getTotalItemsFromDBLast24Hours = async () => {
         value: count(),
       })
       .from(items)
-      .where(sql`unboxed_at >= NOW() - INTERVAL 24 HOUR`);
+      .where(sql`unboxed_at >= datetime('now', '-24 hours')`);
 
     return totalItems[0].value ?? 0;
   } catch (error) {

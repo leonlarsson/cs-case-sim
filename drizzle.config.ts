@@ -1,18 +1,14 @@
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
-  dialect: "mysql",
+  dialect: "sqlite",
   schema: "./db/schema.ts",
-  migrations: {
-    table: "case_sim_migrations",
-  },
   dbCredentials: {
-    url: process.env.DATABASE_URL!.replace(
-      "?sslaccept=strict",
-      '?ssl={"rejectUnauthorized":true}',
-    ),
+    url: "./db/sqlite.db",
   },
-  tablesFilter: ["case_sim_*"],
+  migrations: {
+    table: "migrations",
+  },
   // Print all statements
   verbose: true,
   // Always ask for confirmation

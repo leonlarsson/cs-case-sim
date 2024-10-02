@@ -1,8 +1,6 @@
-import { Client } from "@planetscale/database";
-import { drizzle } from "drizzle-orm/planetscale-serverless";
+import Database from "better-sqlite3";
+import { drizzle } from "drizzle-orm/better-sqlite3";
 
-export const planetscaleClient = new Client({
-  url: process.env.DATABASE_URL,
-});
+export const sqlite = new Database("./db/sqlite.db");
 
-export default drizzle(planetscaleClient);
+export default drizzle(sqlite);
