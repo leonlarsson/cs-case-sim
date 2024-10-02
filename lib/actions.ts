@@ -6,7 +6,7 @@ import { waitUntil } from "@vercel/functions";
 import { and, count, desc, eq, inArray, max, sql } from "drizzle-orm";
 import { CaseDataType, ItemType, ItemTypeDB } from "@/types";
 import db from "@/db";
-import { items } from "@/db/schema";
+import { cases, items } from "@/db/schema";
 import getItem from "@/utils/getItem";
 import casesLocal from "@/lib/data/cases.json";
 import souvenirCasesLocal from "@/lib/data/souvenir.json";
@@ -83,25 +83,17 @@ export const addItemToDB = async (
   // Get unboxerId from cookies
   const unboxerId = await getOrCreateUnboxerIdCookie();
 
-  const { id: caseId, name: caseName, image: caseImage } = caseData;
-  const {
-    id: itemId,
-    name: itemName,
-    rarity,
-    phase,
-    image: itemImage,
-  } = itemData;
+  const { id: caseId } = caseData;
+  const { id: itemId, name, rarity, phase, image } = itemData;
 
   try {
     await db.insert(items).values({
       caseId,
-      caseName,
-      caseImage,
       itemId,
-      itemName,
+      name,
       rarity: rarity.name,
       phase,
-      itemImage,
+      image,
       unboxerId,
     });
 
@@ -112,52 +104,22 @@ export const addItemToDB = async (
   }
 };
 
-// Adds multiple items to the database
-export const addItemsToDB = async (
-  data: {
-    caseData: { id: string; name: string; image: string };
-    itemData: ItemType;
-  }[],
-): Promise<boolean> => {
-  // Validate data
-  const zodReturn = z.array(dataSchema).safeParse(data);
-  if (!zodReturn.success) {
-    console.error("addItemsToDB: Error validating data:", zodReturn.error);
-    return false;
-  }
-
-  // Get unboxerId from cookies
-  const unboxerId = await getOrCreateUnboxerIdCookie();
-
-  try {
-    await db.insert(items).values(
-      data.map(item => ({
-        caseId: item.caseData.id,
-        caseName: item.caseData.name,
-        caseImage: item.caseData.image,
-        itemId: item.itemData.id,
-        itemName: item.itemData.name,
-        rarity: item.itemData.rarity.name,
-        phase: item.itemData.phase ?? null,
-        itemImage: item.itemData.image,
-        unboxerId,
-      })),
-    );
-
-    return true;
-  } catch (error) {
-    console.error("Error adding items:", error);
-    return false;
-  }
-};
-
 export const getItemsFromDB = async (
   onlyCoverts?: boolean,
   onlyPersonal?: boolean,
-): Promise<ItemTypeDB[] | false> => {
+) => {
   try {
     const rows = await db
-      .select()
+      .select({
+        id: items.id,
+        itemName: items.name,
+        phase: items.phase,
+        rarity: items.rarity,
+        itemImage: items.image,
+        unboxedAt: items.unboxedAt,
+        caseId: items.caseId,
+        caseName: cases.name,
+      })
       .from(items)
       .where(
         and(
@@ -167,13 +129,14 @@ export const getItemsFromDB = async (
             : undefined,
         ),
       )
+      .leftJoin(cases, eq(items.caseId, cases.id))
       .orderBy(desc(items.id))
       .limit(100);
 
     return rows;
   } catch (error) {
     console.error("Error getting items:", error);
-    return false;
+    return [];
   }
 };
 

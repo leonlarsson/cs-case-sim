@@ -10,7 +10,9 @@
     "prettier": "prettier . --write",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "db:delete-old-non-converts": "node --experimental-strip-types --env-file=.env  ./db/scripts/deleteOldNonCoverts.ts",
+    "db:insert-cases-from-api": "node --experimental-strip-types --env-file=.env  ./db/scripts/insertCasesToDB.ts"
   },
   "dependencies": {
     "@planetscale/database": "^1.19.0",
