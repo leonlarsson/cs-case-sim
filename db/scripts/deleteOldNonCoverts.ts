@@ -1,12 +1,12 @@
 import { and, sql } from "drizzle-orm";
 import db from "../index.ts";
-import { items } from "../schema.ts";
+import { unboxes } from "../schema.ts";
 
 const deleteOldNonCovertItems = async () => {
   const operationStart = performance.now();
 
   const result = await db
-    .delete(items)
+    .delete(unboxes)
     .where(
       and(
         sql`unboxed_at < datetime('now', '-14 days')`,

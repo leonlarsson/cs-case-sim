@@ -12,7 +12,9 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:delete-old-non-converts": "node --experimental-strip-types --env-file=.env  ./db/scripts/deleteOldNonCoverts.ts",
-    "db:insert-cases-from-api": "node --experimental-strip-types --env-file=.env  ./db/scripts/insertCasesToDB.ts"
+    "db:insert-cases": "node --experimental-strip-types --env-file=.env  ./db/scripts/insertCasesToDB.ts",
+    "db:insert-items": "node --experimental-strip-types --env-file=.env  ./db/scripts/insertItemsToDB.ts",
+    "db:seed": "npm run db:insert-cases && npm run db:insert-items"
   },
   "dependencies": {
     "@planetscale/database": "^1.19.0",

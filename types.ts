@@ -1,5 +1,6 @@
-import { InferSelectModel } from "drizzle-orm";
-import { items } from "./db/schema";
+import { InferModelFromColumns, InferSelectModel } from "drizzle-orm";
+import { unboxes } from "./db/schema";
+import db from "./db";
 
 export type ItemType = {
   /** Extra properties from custom case API */
@@ -50,4 +51,15 @@ export type CasePickerCaseType = Pick<
   "id" | "name" | "description" | "image" | "first_sale_date"
 >;
 
-export type ItemTypeDB = InferSelectModel<typeof items>;
+export type ItemTypeDB = InferSelectModel<typeof unboxes>;
+
+const query = db.query.unboxes.findMany({
+  with: {
+    item: true,
+    case: true,
+  },
+});
+
+export type UnboxWithAllRelations = Awaited<
+  ReturnType<(typeof query)["execute"]>
+>[number];

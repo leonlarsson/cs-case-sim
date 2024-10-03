@@ -2,15 +2,19 @@
 
 import { cookies } from "next/headers";
 import { z } from "zod";
-import { waitUntil } from "@vercel/functions";
-import { and, count, desc, eq, inArray, max, sql } from "drizzle-orm";
-import { CaseDataType, ItemType, ItemTypeDB } from "@/types";
+import { CaseDataType, UnboxWithAllRelations } from "@/types";
 import db from "@/db";
-import { cases, items } from "@/db/schema";
+import { unboxes } from "@/db/schema";
 import getItem from "@/utils/getItem";
 import casesLocal from "@/lib/data/cases.json";
 import souvenirCasesLocal from "@/lib/data/souvenir.json";
 import customCasesLocal from "@/lib/data/customCases.json";
+import {
+  findUnboxById,
+  getFilteredUnboxes,
+  getTotalFilteredUnboxes,
+  getTotalUnboxesLast24Hours,
+} from "./repositories/unboxes";
 
 // Get cases on the server to prevent changing the data on the client before it's sent to the server
 const casesData: CaseDataType[] = [
@@ -19,39 +23,10 @@ const casesData: CaseDataType[] = [
   ...souvenirCasesLocal,
 ];
 
-const dataSchema = z.object({
-  caseData: z.object({
-    id: z.string(),
-    name: z.string(),
-    image: z
-      .string()
-      .refine(
-        url =>
-          url.startsWith("https://raw.githubusercontent.com/ByMykel") ||
-          url.startsWith("https://steamcdn-a.akamaihd.net/apps/730/icons"),
-      ),
-  }),
-  itemData: z.object({
-    id: z.string(),
-    name: z.string(),
-    rarity: z.object({
-      // id: z.string(),
-      name: z.string(),
-      // color: z.string(),
-    }),
-    phase: z.string().optional().nullable(),
-    image: z
-      .string()
-      .refine(
-        url =>
-          url.startsWith("https://raw.githubusercontent.com/ByMykel") ||
-          url.startsWith("https://steamcdn-a.akamaihd.net/apps/730/icons"),
-      ),
-  }),
-});
-
 // Gets a case from the provided caseId, unboxes an item, adds the item to DB, and returns the unboxed item
-export const unboxCase = async (caseId: string): Promise<ItemType | false> => {
+export const unboxCase = async (
+  caseId: string,
+): Promise<UnboxWithAllRelations | false> => {
   const caseData = casesData.find(x => x.id === caseId);
   if (!caseData) {
     console.error(`unboxCase: Case id ${caseId} not found`);
@@ -62,19 +37,28 @@ export const unboxCase = async (caseId: string): Promise<ItemType | false> => {
 
   // Add item to DB if it's not a custom case
   if (!caseData.id.startsWith("crate-custom")) {
-    waitUntil(addItemToDB(caseData, openedItem));
+    const item = await addUnboxToDB(
+      caseData.id,
+      openedItem.itemId,
+      openedItem.isStatTrak,
+    );
+
+    return item;
   }
 
-  return openedItem;
+  return false;
 };
 
 // Adds a single item to the database
-export const addItemToDB = async (
-  caseData: CaseDataType,
-  itemData: ItemType,
-): Promise<boolean> => {
+export const addUnboxToDB = async (
+  caseId: string,
+  itemId: string,
+  isStatTrak: boolean,
+): Promise<UnboxWithAllRelations | false> => {
   // Validate data
-  const zodReturn = dataSchema.safeParse({ caseData, itemData });
+  const zodReturn = z
+    .object({ caseId: z.string(), itemId: z.string(), isStatTrak: z.boolean() })
+    .safeParse({ caseId, itemId, isStatTrak });
   if (!zodReturn.success) {
     console.error("addItemToDB: Error validating data:", zodReturn.error);
     return false;
@@ -83,21 +67,23 @@ export const addItemToDB = async (
   // Get unboxerId from cookies
   const unboxerId = await getOrCreateUnboxerIdCookie();
 
-  const { id: caseId } = caseData;
-  const { id: itemId, name, rarity, phase, image } = itemData;
-
   try {
-    await db.insert(items).values({
-      caseId,
-      itemId,
-      name,
-      rarity: rarity.name,
-      phase,
-      image,
-      unboxerId,
+    const insertedUnbox = await db.transaction(async tx => {
+      const insertedUnbox = await tx
+        .insert(unboxes)
+        .values({
+          caseId,
+          itemId,
+          isStatTrak,
+          unboxerId,
+        })
+        .returning();
+
+      const item = await findUnboxById(insertedUnbox[0].id);
+      return item;
     });
 
-    return true;
+    return insertedUnbox;
   } catch (error) {
     console.error("Error adding item:", error);
     return false;
@@ -107,31 +93,9 @@ export const addItemToDB = async (
 export const getItemsFromDB = async (
   onlyCoverts?: boolean,
   onlyPersonal?: boolean,
-) => {
+): Promise<UnboxWithAllRelations[]> => {
   try {
-    const rows = await db
-      .select({
-        id: items.id,
-        itemName: items.name,
-        phase: items.phase,
-        rarity: items.rarity,
-        itemImage: items.image,
-        unboxedAt: items.unboxedAt,
-        caseId: items.caseId,
-        caseName: cases.name,
-      })
-      .from(items)
-      .where(
-        and(
-          onlyCoverts ? itemIsCovert : undefined,
-          onlyPersonal
-            ? itemIsPersonal(await getOrCreateUnboxerIdCookie())
-            : undefined,
-        ),
-      )
-      .leftJoin(cases, eq(items.caseId, cases.id))
-      .orderBy(desc(items.id))
-      .limit(100);
+    const rows = await getFilteredUnboxes(onlyCoverts, onlyPersonal);
 
     return rows;
   } catch (error) {
@@ -145,20 +109,7 @@ export const getTotalItemsFromDB = async (
   onlyPersonal?: boolean,
 ): Promise<number | false> => {
   try {
-    const totalItems = await db
-      .select({
-        value: onlyCoverts || onlyPersonal ? count() : max(items.id),
-      })
-      .from(items)
-      .where(
-        and(
-          onlyCoverts ? itemIsCovert : undefined,
-          onlyPersonal
-            ? itemIsPersonal(await getOrCreateUnboxerIdCookie())
-            : undefined,
-        ),
-      );
-
+    const totalItems = await getTotalFilteredUnboxes(onlyCoverts, onlyPersonal);
     return totalItems[0].value ?? 0;
   } catch (error) {
     console.error("Error getting total items:", error);
@@ -168,13 +119,7 @@ export const getTotalItemsFromDB = async (
 
 export const getTotalItemsFromDBLast24Hours = async () => {
   try {
-    const totalItems = await db
-      .select({
-        value: count(),
-      })
-      .from(items)
-      .where(sql`unboxed_at >= datetime('now', '-24 hours')`);
-
+    const totalItems = await getTotalUnboxesLast24Hours();
     return totalItems[0].value ?? 0;
   } catch (error) {
     console.error("Error getting total items from last 24 hours:", error);
@@ -207,6 +152,3 @@ export const getOrCreateUnboxerIdCookie = async (): Promise<string> => {
 
   return newUnboxerId;
 };
-
-const itemIsCovert = inArray(items.rarity, ["Covert", "Extraordinary"]);
-const itemIsPersonal = (id: string) => eq(items.unboxerId, id);

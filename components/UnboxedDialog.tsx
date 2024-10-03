@@ -4,12 +4,12 @@ import Link from "next/link";
 import Button from "./Button";
 import gradeColors from "@/utils/gradeColors";
 import Icons from "./icons";
-import { GradeType, ItemType } from "@/types";
+import { GradeType, ItemWithRelations } from "@/types";
 
 type Props = {
   unboxedDialogRef: React.MutableRefObject<HTMLDialogElement | null>;
   historyDialogRef: React.MutableRefObject<HTMLDialogElement | null>;
-  item: ItemType | null;
+  item: ItemWithRelations | null;
   unlockButtonDisabled: boolean;
   openCaseFunc: (dontOpenDialog?: boolean) => void;
 };
@@ -23,8 +23,8 @@ export default ({
   const itemShareUrl = new URL("https://twitter.com/intent/tweet");
   itemShareUrl.searchParams.set(
     "text",
-    `I unboxed a ${item?.name}${
-      item?.phase ? ` (${item.phase})` : ""
+    `I unboxed a ${item?.itemName}${
+      item?.itemPhase ? ` (${item.itemPhase})` : ""
     } in the Counter-Strike Case Simulator!\n\nTry here:`,
   );
   itemShareUrl.searchParams.set("url", "case-sim.com");
@@ -32,7 +32,7 @@ export default ({
   const steamMarketUrl = new URL(
     "https://steamcommunity.com/market/search?appid=730",
   );
-  steamMarketUrl.searchParams.set("q", item?.name ?? "");
+  steamMarketUrl.searchParams.set("q", item?.itemName ?? "");
 
   return (
     <dialog
@@ -43,18 +43,18 @@ export default ({
         <div
           className="border-b-[12px] bg-[#262626]/70 p-3 text-3xl font-semibold text-neutral-400"
           style={{
-            borderColor: item?.name.includes("★")
+            borderColor: item?.itemName?.includes("★")
               ? gradeColors["Rare Special Item"]
-              : gradeColors[item?.rarity.name as GradeType],
+              : gradeColors[item?.itemRarity as GradeType],
           }}
         >
           <span>
             You got a{" "}
             <span
               style={{
-                color: item?.name.includes("★")
+                color: item?.itemName?.includes("★")
                   ? gradeColors["Rare Special Item"]
-                  : gradeColors[item?.rarity.name as GradeType],
+                  : gradeColors[item?.itemRarity as GradeType],
               }}
             >
               <Link
@@ -62,16 +62,10 @@ export default ({
                 target="_blank"
                 title="Share this pull on X / Twitter!"
               >
-                {item?.name} {item?.phase ? ` (${item.phase})` : ""}
+                {item?.itemName} {item?.itemPhase ? ` (${item.itemPhase})` : ""}
               </Link>
             </span>
           </span>
-
-          {item?.extra?.description && (
-            <div className="whitespace-pre text-xl">
-              {item.extra.description}
-            </div>
-          )}
         </div>
 
         <div className="flex flex-col p-2">
@@ -79,8 +73,8 @@ export default ({
             <div>
               <img
                 key={item.id}
-                src={item.image}
-                alt={`${item.name} image`}
+                src={item.itemImage ?? ""}
+                alt={`${item.itemName} image`}
                 width={512}
                 height={384}
                 draggable={false}

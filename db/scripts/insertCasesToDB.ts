@@ -4,6 +4,7 @@ import db from "../index.ts";
 
 const caseSchema = z.object({
   id: z.string(),
+  type: z.string().nullable(),
   name: z.string(),
   image: z.string(),
   description: z.string().nullable(),
@@ -29,8 +30,9 @@ async function insertCases() {
   const result = await db
     .insert(cases)
     .values(
-      casesData.map((caseData: any) => ({
+      parsedData.data.map(caseData => ({
         id: caseData.id,
+        type: caseData.type,
         name: caseData.name,
         image: caseData.image,
         description: caseData.description,

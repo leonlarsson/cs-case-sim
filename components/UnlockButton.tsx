@@ -5,12 +5,14 @@ import { useAudio } from "./AudioProvider";
 import UnboxedDialog from "./UnboxedDialog";
 import StatsAndHistoryDialog from "./StatsAndHistoryDialog";
 import Button from "./Button";
-import { ItemType } from "@/types";
+import { ItemType, ItemWithRelations } from "@/types";
 import { unboxCase } from "@/lib/actions";
 
 export default ({ caseId }: { caseId: string }) => {
-  const [unboxedItems, setUnboxedItems] = useState<ItemType[]>([]);
-  const [unboxedItem, setUnboxedItem] = useState<ItemType | null>(null);
+  const [unboxedItems, setUnboxedItems] = useState<ItemWithRelations[]>([]);
+  const [unboxedItem, setUnboxedItem] = useState<ItemWithRelations | null>(
+    null,
+  );
   const [unlockButtonDisabled, setUnlockButtonDisabled] = useState(false);
   const unboxedDialogRef = useRef<HTMLDialogElement>(null);
   const historyDialogRef = useRef<HTMLDialogElement>(null);
@@ -44,19 +46,22 @@ export default ({ caseId }: { caseId: string }) => {
     }, 1);
   };
 
-  const playSoundBasedOnRarity = (openedItem: ItemType) => {
+  const playSoundBasedOnRarity = (openedItem: ItemWithRelations) => {
     if (
       ["Consumer Grade", "Industrial Grade", "Mil-Spec Grade"].includes(
-        openedItem.rarity.name,
+        openedItem.itemRarity ?? "",
       )
     )
       milspecOpenSound.play();
 
-    if (openedItem.rarity.name === "Restricted") restrictedOpenSound.play();
-    if (openedItem.rarity.name === "Classified") classifiedOpenSound.play();
-    if (openedItem.rarity.name === "Covert" && !openedItem.name.includes("★"))
+    if (openedItem.itemRarity === "Restricted") restrictedOpenSound.play();
+    if (openedItem.itemRarity === "Classified") classifiedOpenSound.play();
+    if (
+      openedItem.itemRarity === "Covert" &&
+      !openedItem.itemName?.includes("★")
+    )
       covertOpenSound.play();
-    if (openedItem.name.includes("★")) goldOpenSound.play();
+    if (openedItem.itemName?.includes("★")) goldOpenSound.play();
   };
 
   const openCase = async (dontOpenDialog?: boolean) => {
@@ -69,7 +74,10 @@ export default ({ caseId }: { caseId: string }) => {
     }
 
     // If the item is Covert or RSI, wait for 2 seconds before enabling the unlock button
-    if (openedItem.name.includes("★") || openedItem.rarity.name === "Covert") {
+    if (
+      openedItem.itemName?.includes("★") ||
+      openedItem.itemRarity === "Covert"
+    ) {
       setTimeout(() => {
         setUnlockButtonDisabled(false);
         focusRetryButton();
@@ -93,7 +101,10 @@ export default ({ caseId }: { caseId: string }) => {
     playSoundBasedOnRarity(openedItem);
 
     // Disable the unlock button for 2 seconds if the item is a Covert or RSI
-    if (openedItem.name.includes("★") || openedItem.rarity.name === "Covert") {
+    if (
+      openedItem.itemName?.includes("★") ||
+      openedItem.itemRarity === "Covert"
+    ) {
       setUnlockButtonDisabled(true);
       setTimeout(() => {
         setUnlockButtonDisabled(false);
@@ -140,11 +151,11 @@ export default ({ caseId }: { caseId: string }) => {
       />
 
       {/* STATS AND HISTORY DIALOG */}
-      <StatsAndHistoryDialog
+      {/* <StatsAndHistoryDialog
         historyDialogRef={historyDialogRef}
         unboxedItems={unboxedItems}
         setUnboxedItems={setUnboxedItems}
-      />
+      /> */}
     </>
   );
 };

@@ -16,7 +16,9 @@ const itemIsStatTrak = (caseData: CaseDataType, item: ItemType): boolean => {
 };
 
 // This function is currently exclusively called on the server side
-export default (caseData: CaseDataType): ItemType => {
+export default (
+  caseData: CaseDataType,
+): { itemId: string; isStatTrak: boolean } => {
   // This is pretty hacky. If the case is of type "Case", use the grade odds for cases. Otherwise, use the grade odds for souvenir packages.
   const gradeOdds =
     caseData.type === "Case" ? gradeOddsCase : gradeOddsSouvenir;
@@ -60,11 +62,14 @@ export default (caseData: CaseDataType): ItemType => {
         }
 
         // Return the item
-        return unboxedItem;
+        return {
+          itemId: unboxedItem.id,
+          isStatTrak: itemIsStatTrak(caseData, unboxedItem),
+        };
       }
     }
   }
 
   // If no valid grade is found, return a default item from "contains"
-  return caseData.contains[0];
+  return { itemId: caseData.contains[0].id, isStatTrak: false };
 };
