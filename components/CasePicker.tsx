@@ -21,13 +21,13 @@ export default ({
   const { buttonClickAlternativeSound, caseSelectSound } = useAudio();
 
   const featuredCases: CasePickerCaseType[] = [
-    availableCases.find(x => x.id === "crate-4904")!,
+    availableCases.find(x => x.id === "crate-7003")!,
   ];
 
   // Select the case based on the URL parameter
   // If the case is not found, select the Kilowatt case, but fall back to index 0
   const selectedCase =
-    availableCases.find(x => x.id === (caseParam ?? "crate-4904")) ??
+    availableCases.find(x => x.id === (caseParam ?? "crate-7003")) ??
     availableCases[0];
 
   // Load favorite cases from localStorage on mount

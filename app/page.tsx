@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Image from "next/image";
 import casesLocal from "@/lib/data/cases.json";
 import souvenirCasesLocal from "@/lib/data/souvenir.json";
 import customCasesLocal from "@/lib/data/customCases.json";
@@ -73,27 +74,27 @@ export default async function Home({ searchParams }: PageProps) {
   ];
 
   const selectedCase =
-    casesData.find(x => x.id === (selectedCaseParam ?? "crate-4904")) ??
+    casesData.find(x => x.id === (selectedCaseParam ?? "crate-7003")) ??
     casesData[0];
 
   return (
     <main id="main" className="relative flex min-h-screen select-none flex-col">
       {/* Notice message */}
-      {/* {selectedCase.id !== "crate-4904" && (
+      {selectedCase.id !== "crate-7003" && (
         <Button
           variant="secondary-darker"
-          href="/?case=crate-4904"
+          href="/?case=crate-7003"
           className="mx-2 mt-1 flex w-fit items-center gap-2 py-1 backdrop-blur-md"
         >
-          Try the new Kilowatt Case
+          Try the new Gallery Case
           <Image
-            src="https://raw.githubusercontent.com/ByMykel/CSGO-API/1675e7262bd51fdba1d74664fd4b4fc06a50bb12/public/images/econ/weapon_cases/crate_community_33.png"
-            alt="Kilowatt Case"
+            src="https://raw.githubusercontent.com/ByMykel/counter-strike-image-tracker/main/static/panorama/images/econ/weapon_cases/crate_community_34_png.png"
+            alt="Gallery Case"
             width={256 / 7}
             height={198 / 7}
           />
         </Button>
-      )} */}
+      )}
 
       {/* Header row */}
       <div className="mx-2 mt-2 flex flex-col-reverse justify-between gap-2 min-[800px]:flex-row">
