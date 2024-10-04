@@ -4,15 +4,14 @@ import Link from "next/link";
 import Button from "./Button";
 import gradeColors from "@/utils/gradeColors";
 import { formatDecimal, formatPercentage } from "@/utils/formatters";
-import { GradeType, ItemType } from "@/types";
+import { ItemGrade, LocalStorageItem } from "@/types";
 
 type Props = {
   historyDialogRef: React.MutableRefObject<HTMLDialogElement | null>;
-  unboxedItems: ItemType[];
-  setUnboxedItems: React.Dispatch<React.SetStateAction<ItemType[]>>;
+  unboxedItems: LocalStorageItem[];
 };
 
-export default ({ historyDialogRef, unboxedItems, setUnboxedItems }: Props) => {
+export default ({ historyDialogRef, unboxedItems }: Props) => {
   return (
     <dialog
       className="mx-auto w-full max-w-lg border-[1px] border-white/30 bg-[#2d2d2d]/50 text-xl text-white backdrop-blur-xl backdrop:bg-black/30 backdrop:backdrop-blur-sm"
@@ -65,12 +64,12 @@ export default ({ historyDialogRef, unboxedItems, setUnboxedItems }: Props) => {
                 {grade}:{" "}
                 <span className="font-semibold">
                   {unboxedItems
-                    .filter(x => x.rarity.name === grade)
+                    .filter(x => x.rarity === grade)
                     .length.toLocaleString("en")}{" "}
                   <span>
                     (
                     {formatPercentage(
-                      unboxedItems.filter(x => x.rarity.name === grade).length /
+                      unboxedItems.filter(x => x.rarity === grade).length /
                         unboxedItems.length,
                     )}
                     )
@@ -87,16 +86,14 @@ export default ({ historyDialogRef, unboxedItems, setUnboxedItems }: Props) => {
             Covert:{" "}
             <span className="font-semibold">
               {unboxedItems
-                .filter(
-                  x => x.rarity.name === "Covert" && !x.name.includes("★"),
-                )
+                .filter(x => x.rarity === "Covert" && !x.name.includes("★"))
                 .length.toLocaleString("en")}{" "}
               {/* Percentage */}
               <span>
                 (
                 {formatPercentage(
                   unboxedItems.filter(
-                    x => x.rarity.name === "Covert" && !x.name.includes("★"),
+                    x => x.rarity === "Covert" && !x.name.includes("★"),
                   ).length / unboxedItems.length,
                 )}
                 )
@@ -140,7 +137,7 @@ export default ({ historyDialogRef, unboxedItems, setUnboxedItems }: Props) => {
                   style={{
                     borderColor: item.name.includes("★")
                       ? gradeColors["Rare Special Item"]
-                      : gradeColors[item.rarity.name as GradeType],
+                      : gradeColors[item.rarity as ItemGrade],
                   }}
                 >
                   {item.name} {item?.phase ? ` (${item.phase})` : ""}
@@ -153,11 +150,11 @@ export default ({ historyDialogRef, unboxedItems, setUnboxedItems }: Props) => {
           <div>
             <div className="font-semibold underline">Coverts and Golds</div>
             {unboxedItems.filter(
-              x => x.rarity.name === "Covert" || x.name.includes("★"),
+              x => x.rarity === "Covert" || x.name.includes("★"),
             ).length === 0 && <span>No items unboxed yet</span>}
             <div className="flex flex-col gap-1">
               {unboxedItems
-                .filter(x => x.rarity.name === "Covert" || x.name.includes("★"))
+                .filter(x => x.rarity === "Covert" || x.name.includes("★"))
                 .map((item, i) => (
                   <div
                     key={`${item.id}-${i}`}
@@ -165,7 +162,7 @@ export default ({ historyDialogRef, unboxedItems, setUnboxedItems }: Props) => {
                     style={{
                       borderColor: item.name.includes("★")
                         ? gradeColors["Rare Special Item"]
-                        : gradeColors[item.rarity.name as GradeType],
+                        : gradeColors[item.rarity as ItemGrade],
                     }}
                   >
                     {item.name} {item.phase ? ` (${item.phase})` : ""}
@@ -178,8 +175,8 @@ export default ({ historyDialogRef, unboxedItems, setUnboxedItems }: Props) => {
             <Button
               variant="danger"
               onClick={() => {
-                setUnboxedItems([]);
-                localStorage.setItem("unboxedItemsNew", "[]");
+                localStorage.setItem("unboxedItemsV2", "[]");
+                location.reload();
               }}
             >
               CLEAR HISTORY

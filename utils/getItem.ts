@@ -1,12 +1,12 @@
 import { gradeOddsCase, gradeOddsSouvenir } from "./gradeOdds";
-import { CaseDataType, GradeType, ItemType } from "@/types";
+import { APICase, APIItem, ItemGrade } from "@/types";
 
 // Determine if the item should be StatTrak
 // 1. Case has not disabled StatTraks
 // 2. Item is not Extraordinary (Gloves)
 // 3. Case is not a Souvenir package
 // 4. 10% chance
-const itemIsStatTrak = (caseData: CaseDataType, item: ItemType): boolean => {
+const itemIsStatTrak = (caseData: APICase, item: APIItem): boolean => {
   return (
     caseData.extra?.disable_stattraks !== true &&
     item.rarity.name !== "Extraordinary" &&
@@ -16,9 +16,7 @@ const itemIsStatTrak = (caseData: CaseDataType, item: ItemType): boolean => {
 };
 
 // This function is currently exclusively called on the server side
-export default (
-  caseData: CaseDataType,
-): { itemId: string; isStatTrak: boolean } => {
+export default (caseData: APICase): { itemId: string; isStatTrak: boolean } => {
   // This is pretty hacky. If the case is of type "Case", use the grade odds for cases. Otherwise, use the grade odds for souvenir packages.
   const gradeOdds =
     caseData.type === "Case" ? gradeOddsCase : gradeOddsSouvenir;
@@ -28,7 +26,7 @@ export default (
 
   // Iterate through each grade and determine if the random number falls within the range
   for (const grade in gradeOdds) {
-    cumulativeProbability += gradeOdds[grade as GradeType];
+    cumulativeProbability += gradeOdds[grade as ItemGrade];
 
     if (random <= cumulativeProbability) {
       // Item is a RSI if the grade is "Rare Special Item" or the case's custom gold chance is met

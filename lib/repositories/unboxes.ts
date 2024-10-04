@@ -3,7 +3,9 @@
 import db from "@/db";
 import { items, unboxes } from "@/db/schema";
 import { and, count, desc, eq, inArray, max, sql } from "drizzle-orm";
-import { getOrCreateUnboxerIdCookie } from "../actions";
+import { getOrCreateUnboxerIdCookie } from "./cookies";
+import { UnboxWithAllRelations } from "@/types";
+import { z } from "zod";
 
 /** Gets an unbox with all relations by id. */
 export const findUnboxById = async (id: number) =>
@@ -15,32 +17,26 @@ export const findUnboxById = async (id: number) =>
     },
   });
 
-export const test = async (onlyCoverts?: boolean, onlyPersonal?: boolean) =>
-  db
-    .select()
-    .from(unboxes)
-    .where(
-      and(
-        onlyCoverts ? itemIsCovert : undefined,
-        onlyPersonal
-          ? itemIsPersonal(await getOrCreateUnboxerIdCookie())
-          : undefined,
-      ),
-    )
-    .leftJoin(items, eq(unboxes.itemId, items.id));
-
 /** Gets the 100 latest unboxes. */
 export const getFilteredUnboxes = async (
   onlyCoverts?: boolean,
   onlyPersonal?: boolean,
-) =>
-  db.query.unboxes.findMany({
+) => {
+  return db.query.unboxes.findMany({
     with: {
       item: true,
       case: true,
     },
     where: and(
-      onlyCoverts ? itemIsCovert : undefined,
+      onlyCoverts
+        ? inArray(
+            unboxes.itemId, // Compare unbox.itemId with item IDs from the subquery
+            db
+              .select({ id: items.id }) // Subquery selecting item IDs
+              .from(items)
+              .where(itemIsCovert), // Filter by item rarity
+          )
+        : undefined,
       onlyPersonal
         ? itemIsPersonal(await getOrCreateUnboxerIdCookie())
         : undefined,
@@ -48,12 +44,13 @@ export const getFilteredUnboxes = async (
     orderBy: [desc(unboxes.id)],
     limit: 100,
   });
+};
 
 export const getTotalFilteredUnboxes = async (
   onlyCoverts?: boolean,
   onlyPersonal?: boolean,
-) =>
-  db
+): Promise<number> => {
+  const query = await db
     .select({
       value: onlyCoverts || onlyPersonal ? count() : max(unboxes.id),
     })
@@ -68,13 +65,60 @@ export const getTotalFilteredUnboxes = async (
     )
     .leftJoin(items, eq(unboxes.itemId, items.id));
 
-export const getTotalUnboxesLast24Hours = async () =>
-  db
+  return query[0].value ?? 0;
+};
+
+export const getTotalUnboxesLast24Hours = async (): Promise<number> => {
+  const query = await db
     .select({
       value: count(),
     })
     .from(unboxes)
     .where(sql`unboxed_at >= datetime('now', '-24 hours')`);
+
+  return query[0].value ?? 0;
+};
+
+// Adds a single item to the database
+export const addUnbox = async (
+  caseId: string,
+  itemId: string,
+  isStatTrak: boolean,
+) => {
+  // Validate data
+  const zodReturn = z
+    .object({ caseId: z.string(), itemId: z.string(), isStatTrak: z.boolean() })
+    .safeParse({ caseId, itemId, isStatTrak });
+  if (!zodReturn.success) {
+    console.error("addItemToDB: Error validating data:", zodReturn.error);
+    return false;
+  }
+
+  // Get unboxerId from cookies
+  const unboxerId = await getOrCreateUnboxerIdCookie();
+
+  try {
+    const insertedUnbox = await db.transaction(async tx => {
+      const insertedUnbox = await tx
+        .insert(unboxes)
+        .values({
+          caseId,
+          itemId,
+          isStatTrak,
+          unboxerId,
+        })
+        .returning();
+
+      const item = await findUnboxById(insertedUnbox[0].id);
+      return item;
+    });
+
+    return insertedUnbox;
+  } catch (error) {
+    console.error("Error adding item:", error);
+    return false;
+  }
+};
 
 // Utils
 const itemIsCovert = inArray(items.rarity, ["Covert", "Extraordinary"]);

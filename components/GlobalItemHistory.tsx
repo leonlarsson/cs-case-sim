@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { getItemsFromDB } from "@/lib/actions";
 import Item from "./Item";
-import { GradeType } from "@/types";
+import { ItemGrade } from "@/types";
 import { getFilteredUnboxes } from "@/lib/repositories/unboxes";
+import statTrakifyName from "@/utils/statTrakifyName";
 
 export default async ({
   onlyCoverts,
@@ -27,11 +27,7 @@ export default async ({
 
       {unboxes ? (
         unboxes.map(unbox => {
-          const [itemName, skinName] = unbox.item.name
-            ? unbox.item.name.split(" | ")
-            : [null, null];
-
-          const itemDisplayName = `${unbox.isStatTrak ? (itemName?.includes("★") ? "★ StatTrak™ " : "StatTrak™ ") : ""}${itemName}`;
+          const [itemName, skinName] = unbox.item.name.split(" | ");
 
           return (
             <div
@@ -42,14 +38,14 @@ export default async ({
             >
               <Link href={`/?case=${unbox.caseId}`}>
                 <Item
-                  itemName={itemDisplayName}
+                  itemName={statTrakifyName(itemName, unbox.isStatTrak)}
                   skinName={`${skinName} ${
                     unbox.item.phase ? ` (${unbox.item.phase})` : ""
                   }`}
                   grade={
                     unbox.item.name.includes("★")
                       ? "Rare Special Item"
-                      : (unbox.item.rarity as GradeType)
+                      : (unbox.item.rarity as ItemGrade)
                   }
                   image={unbox.item.image}
                 />

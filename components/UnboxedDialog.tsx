@@ -4,27 +4,28 @@ import Link from "next/link";
 import Button from "./Button";
 import gradeColors from "@/utils/gradeColors";
 import Icons from "./icons";
-import { GradeType, ItemWithRelations } from "@/types";
+import { ItemGrade, UnboxWithAllRelations } from "@/types";
+import statTrakifyName from "@/utils/statTrakifyName";
 
 type Props = {
   unboxedDialogRef: React.MutableRefObject<HTMLDialogElement | null>;
   historyDialogRef: React.MutableRefObject<HTMLDialogElement | null>;
-  item: ItemWithRelations | null;
+  unbox: UnboxWithAllRelations | null;
   unlockButtonDisabled: boolean;
   openCaseFunc: (dontOpenDialog?: boolean) => void;
 };
 export default ({
   unboxedDialogRef,
   historyDialogRef,
-  item,
+  unbox,
   unlockButtonDisabled,
   openCaseFunc,
 }: Props) => {
   const itemShareUrl = new URL("https://twitter.com/intent/tweet");
   itemShareUrl.searchParams.set(
     "text",
-    `I unboxed a ${item?.itemName}${
-      item?.itemPhase ? ` (${item.itemPhase})` : ""
+    `I unboxed a ${statTrakifyName(unbox?.item.name ?? "", unbox?.isStatTrak ?? false)}${
+      unbox?.item.phase ? ` (${unbox?.item.phase})` : ""
     } in the Counter-Strike Case Simulator!\n\nTry here:`,
   );
   itemShareUrl.searchParams.set("url", "case-sim.com");
@@ -32,7 +33,7 @@ export default ({
   const steamMarketUrl = new URL(
     "https://steamcommunity.com/market/search?appid=730",
   );
-  steamMarketUrl.searchParams.set("q", item?.itemName ?? "");
+  steamMarketUrl.searchParams.set("q", unbox?.item.name ?? "");
 
   return (
     <dialog
@@ -43,18 +44,18 @@ export default ({
         <div
           className="border-b-[12px] bg-[#262626]/70 p-3 text-3xl font-semibold text-neutral-400"
           style={{
-            borderColor: item?.itemName?.includes("★")
+            borderColor: unbox?.item.name.includes("★")
               ? gradeColors["Rare Special Item"]
-              : gradeColors[item?.itemRarity as GradeType],
+              : gradeColors[unbox?.item.rarity as ItemGrade],
           }}
         >
           <span>
             You got a{" "}
             <span
               style={{
-                color: item?.itemName?.includes("★")
+                color: unbox?.item.name.includes("★")
                   ? gradeColors["Rare Special Item"]
-                  : gradeColors[item?.itemRarity as GradeType],
+                  : gradeColors[unbox?.item.rarity as ItemGrade],
               }}
             >
               <Link
@@ -62,19 +63,23 @@ export default ({
                 target="_blank"
                 title="Share this pull on X / Twitter!"
               >
-                {item?.itemName} {item?.itemPhase ? ` (${item.itemPhase})` : ""}
+                {statTrakifyName(
+                  unbox?.item.name ?? "",
+                  unbox?.isStatTrak ?? false,
+                )}{" "}
+                {unbox?.item.phase ? ` (${unbox?.item.phase})` : ""}
               </Link>
             </span>
           </span>
         </div>
 
         <div className="flex flex-col p-2">
-          {item && (
+          {unbox?.item && (
             <div>
               <img
-                key={item.id}
-                src={item.itemImage ?? ""}
-                alt={`${item.itemName} image`}
+                key={unbox?.item.id}
+                src={unbox?.item.image}
+                alt={`${unbox?.item.name} image`}
                 width={512}
                 height={384}
                 draggable={false}
