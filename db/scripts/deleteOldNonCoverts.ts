@@ -5,19 +5,21 @@ import { unboxes } from "../schema.ts";
 const deleteOldNonCovertItems = async () => {
   const operationStart = performance.now();
 
+  // TODO: This does not work with the new relations
   const result = await db
     .delete(unboxes)
     .where(
       and(
-        sql`unboxed_at < datetime('now', '-14 days')`,
+        sql`unboxed_at < NOW() - INTERVAL '14 days'`,
         sql`rarity NOT IN ('Covert', 'Extraordinary')`,
       ),
-    );
+    )
+    .returning({ id: unboxes.id });
 
   const operationEnd = performance.now();
 
   console.log(
-    `✓ Complete. Deleted ${result.changes} rows in ${((operationEnd - operationStart) / 1000).toFixed()}s`,
+    `✓ Complete. Deleted ${result.length} rows in ${((operationEnd - operationStart) / 1000).toFixed()}s`,
   );
 };
 

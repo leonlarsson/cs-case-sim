@@ -1,7 +1,7 @@
 # This entire file is borrowed from https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile
 # NOTE: I have updated to lts-alpine and added the sed command to uncomment output: "standalone" in next.config.js
 
-FROM node:lts-alpine AS base
+FROM node:22.9.0-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -30,6 +30,15 @@ RUN npm run build
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
+
+# Install dependencies needed for DB scripts
+RUN npm install postgres@3.4.4 drizzle-orm@0.33.0 drizzle-kit@0.22.8 zod@3.23.8
+
+# Copy Drizzle config
+COPY drizzle.config.ts ./ 
+
+# Copy the DB scripts + schema
+COPY ./db ./db
 
 ENV NODE_ENV=production
 # Opt out of runtime telemetry

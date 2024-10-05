@@ -6,17 +6,16 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "drizzle-kit push && next start",
+    "start": "next start",
     "lint": "next lint",
     "prettier": "prettier . --write",
-    "db:push": "drizzle-kit push",
+    "db:sync": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:delete-old-non-converts": "node --experimental-strip-types ./db/scripts/deleteOldNonCoverts.ts",
+    "db:delete-old-non-coverts": "node --experimental-strip-types ./db/scripts/deleteOldNonCoverts.ts",
     "db:insert-cases": "node --experimental-strip-types ./db/scripts/insertCasesToDB.ts",
     "db:insert-items": "node --experimental-strip-types ./db/scripts/insertItemsToDB.ts",
-    "db:seed": "npm run db:insert-cases && npm run db:insert-items",
-    "docker:seeder-sh": "docker exec -it db-seeder sh"
+    "db:seed": "npm run db:insert-cases && npm run db:insert-items"
   },
   "dependencies": {
     "@planetscale/database": "^1.19.0",
@@ -25,6 +24,7 @@
     "drizzle-orm": "^0.33.0",
     "howler": "^2.2.4",
     "next": "^14.2.7",
+    "postgres": "^3.4.4",
     "react": "^18",
     "react-dom": "^18",
     "sharp": "^0.33.5",

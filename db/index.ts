@@ -1,15 +1,11 @@
-import path from "path";
-import { existsSync, mkdirSync } from "fs";
-import Database from "better-sqlite3";
-import { drizzle } from "drizzle-orm/better-sqlite3";
+import { drizzle } from "drizzle-orm/postgres-js";
 import * as schema from "./schema.ts";
+import postgres from "postgres";
 
-// Check if the directory exists
-// const sqliteDir = path.join(process.cwd(), "sqlite");
-// if (!existsSync(sqliteDir)) {
-//   mkdirSync(sqliteDir);
-// }
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL is required");
+}
 
-export const sqlite = new Database("./sqlite/sqlite.db");
+export const pg = postgres(process.env.DATABASE_URL);
 
-export default drizzle(sqlite, { schema });
+export default drizzle(pg, { schema });

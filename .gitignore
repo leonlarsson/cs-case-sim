@@ -38,3 +38,4 @@ next-env.d.ts
 # DB
 *.db
 *.sql
+/pgdata

@@ -6,16 +6,20 @@ services:
     container_name: next-app
     ports:
       - "3000:3000"
-    volumes:
-      - ./sqlite:/app/sqlite
+    environment:
+      DATABASE_URL: ${DATABASE_URL?:err}
+    depends_on: 
+      - db
   
-  db-seeder:
-    build:
-      context: .
-      dockerfile: Dockerfile-seeder
-    container_name: db-seeder
+  db:
+    image: postgres:latest
+    container_name: pg-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER?:err}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD?:err}
+      POSTGRES_DB: ${POSTGRES_DB?:err}
     volumes:
-      - ./sqlite:/app/sqlite
-    depends_on:
-      - app
-    command: ["tail", "-f", "/dev/null"]
+      - ./pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

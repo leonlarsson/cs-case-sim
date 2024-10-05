@@ -1,11 +1,10 @@
 "use server";
 
 import db from "@/db";
+import { z } from "zod";
 import { items, unboxes } from "@/db/schema";
 import { and, count, desc, eq, inArray, max, sql } from "drizzle-orm";
 import { getOrCreateUnboxerIdCookie } from "./cookies";
-import { UnboxWithAllRelations } from "@/types";
-import { z } from "zod";
 
 /** Gets an unbox with all relations by id. */
 export const findUnboxById = async (id: number) =>
@@ -74,7 +73,7 @@ export const getTotalUnboxesLast24Hours = async (): Promise<number> => {
       value: count(),
     })
     .from(unboxes)
-    .where(sql`unboxed_at >= datetime('now', '-24 hours')`);
+    .where(sql`unboxed_at >= NOW() - INTERVAL '24 hours'`);
 
   return query[0].value ?? 0;
 };
@@ -99,7 +98,7 @@ export const addUnbox = async (
 
   try {
     const insertedUnbox = await db.transaction(async tx => {
-      const insertedUnbox = await tx
+      const [insertedUnbox] = await tx
         .insert(unboxes)
         .values({
           caseId,
@@ -109,7 +108,13 @@ export const addUnbox = async (
         })
         .returning();
 
-      const item = await findUnboxById(insertedUnbox[0].id);
+      const item = await tx.query.unboxes.findFirst({
+        where: eq(unboxes.id, insertedUnbox.id),
+        with: {
+          item: true,
+          case: true,
+        },
+      });
       return item;
     });
 
