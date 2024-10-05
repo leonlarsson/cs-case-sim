@@ -1,0 +1,21 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: next-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./sqlite:/app/sqlite
+  
+  db-seeder:
+    build:
+      context: .
+      dockerfile: Dockerfile-seeder
+    container_name: db-seeder
+    volumes:
+      - ./sqlite:/app/sqlite
+    depends_on:
+      - app
+    command: ["tail", "-f", "/dev/null"]

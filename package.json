@@ -2,6 +2,7 @@
   "name": "cs2-case-ui-react",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,10 +12,11 @@
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:delete-old-non-converts": "node --experimental-strip-types --env-file=.env  ./db/scripts/deleteOldNonCoverts.ts",
-    "db:insert-cases": "node --experimental-strip-types --env-file=.env  ./db/scripts/insertCasesToDB.ts",
-    "db:insert-items": "node --experimental-strip-types --env-file=.env  ./db/scripts/insertItemsToDB.ts",
-    "db:seed": "npm run db:insert-cases && npm run db:insert-items"
+    "db:delete-old-non-converts": "node --experimental-strip-types ./db/scripts/deleteOldNonCoverts.ts",
+    "db:insert-cases": "node --experimental-strip-types ./db/scripts/insertCasesToDB.ts",
+    "db:insert-items": "node --experimental-strip-types ./db/scripts/insertItemsToDB.ts",
+    "db:seed": "npm run db:insert-cases && npm run db:insert-items",
+    "docker:seeder-sh": "docker exec -it db-seeder sh"
   },
   "dependencies": {
     "@planetscale/database": "^1.19.0",
