@@ -6,20 +6,22 @@ services:
     container_name: next-app
     ports:
       - "3000:3000"
-    environment:
-      DATABASE_URL: ${DATABASE_URL?:err}
-    depends_on: 
-      - db
-  
-  db:
-    image: postgres:latest
-    container_name: pg-db
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER?:err}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD?:err}
-      POSTGRES_DB: ${POSTGRES_DB?:err}
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
+      - ./sqlite:/app/sqlite
+#     environment:
+#       DATABASE_URL: ${DATABASE_URL?:err}
+#     depends_on: 
+#       - db
+  
+#   db:
+#     image: postgres:latest
+#     container_name: pg-db
+#     environment:
+#       POSTGRES_USER: ${POSTGRES_USER?:err}
+#       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD?:err}
+#       POSTGRES_DB: ${POSTGRES_DB?:err}
+#     volumes:
+#       - ./pgdata:/var/lib/postgresql/data
 
-volumes:
-  pgdata:
+# volumes:
+#   pgdata:

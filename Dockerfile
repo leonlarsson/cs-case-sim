@@ -25,6 +25,8 @@ RUN sed -i 's|// output: "standalone",|output: "standalone",|' next.config.js
 # Opt out of telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
 
+RUN mkdir -p ./sqlite
+
 RUN npm run build
 
 # Production image, copy all the files and run next

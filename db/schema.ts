@@ -1,33 +1,26 @@
-import {
-  pgTable,
-  index,
-  text,
-  boolean,
-  serial,
-  varchar,
-  uuid,
-  timestamp,
-} from "drizzle-orm/pg-core";
+import { sqliteTable, index, integer, text } from "drizzle-orm/sqlite-core";
 import { relations, sql } from "drizzle-orm";
 
 // To update the DB, modify this file and run "npm run db:push".
 // This is because I don't use migrations yet because this schema already exists in the DB, and I can't add indexes easily because they already exist.
 // To watch: --no-init: https://github.com/drizzle-team/drizzle-orm/discussions/2624
 
-export const unboxes = pgTable(
+export const unboxes = sqliteTable(
   "unboxes",
   {
-    id: serial("id").primaryKey(),
+    id: integer("id").primaryKey().notNull(),
     caseId: text("case_id")
       .notNull()
       .references(() => cases.id),
     itemId: text("item_id")
       .notNull()
       .references(() => items.id),
-    isStatTrak: boolean("is_stat_trak").default(false).notNull(),
-    unboxerId: uuid("unboxer_id").notNull(),
-    unboxedAt: timestamp("unboxed_at", { withTimezone: true })
-      .default(sql`now()`)
+    isStatTrak: integer("is_stat_trak", { mode: "boolean" })
+      .default(false)
+      .notNull(),
+    unboxerId: text("unboxer_id").notNull(),
+    unboxedAt: text("unboxed_at")
+      .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
   },
   table => {
@@ -49,18 +42,18 @@ export const unboxesRelations = relations(unboxes, ({ one }) => ({
   }),
 }));
 
-export const cases = pgTable("cases", {
-  id: text("id").primaryKey(),
+export const cases = sqliteTable("cases", {
+  id: text("id").primaryKey().notNull(),
   type: text("type"),
   name: text("name").notNull(),
   description: text("description"),
   image: text("image").notNull(),
 });
 
-export const items = pgTable(
+export const items = sqliteTable(
   "items",
   {
-    id: text("id").primaryKey(),
+    id: text("id").primaryKey().notNull(),
     name: text("name").notNull(),
     description: text("description"),
     image: text("image").notNull(),

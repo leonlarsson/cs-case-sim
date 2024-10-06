@@ -73,7 +73,7 @@ export const getTotalUnboxesLast24Hours = async (): Promise<number> => {
       value: count(),
     })
     .from(unboxes)
-    .where(sql`unboxed_at >= NOW() - INTERVAL '24 hours'`);
+    .where(sql`unboxed_at >= datetime('now', '-24 hours')`);
 
   return query[0].value ?? 0;
 };
