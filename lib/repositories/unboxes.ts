@@ -68,14 +68,11 @@ export const getTotalFilteredUnboxes = async (
 };
 
 export const getTotalUnboxesLast24Hours = async (): Promise<number> => {
-  const query = await db
-    .select({
-      value: count(),
-    })
-    .from(unboxes)
-    .where(sql`unboxed_at >= NOW() - INTERVAL '24 hours'`);
-
-  return query[0].value ?? 0;
+  const total = await db.$count(
+    unboxes,
+    sql`unboxed_at >= NOW() - INTERVAL '24 hours'`,
+  );
+  return total;
 };
 
 // Adds a single item to the database

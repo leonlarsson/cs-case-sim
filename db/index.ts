@@ -8,4 +8,4 @@ if (!process.env.DATABASE_URL) {
 
 export const pg = postgres(process.env.DATABASE_URL);
 
-export default drizzle(pg, { schema });
+export default drizzle(pg, { schema, casing: "snake_case" });

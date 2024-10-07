@@ -18,7 +18,7 @@
     "db:seed": "npm run db:insert-cases && npm run db:insert-items"
   },
   "dependencies": {
-    "drizzle-orm": "^0.33.0",
+    "drizzle-orm": "^0.34.1",
     "howler": "^2.2.4",
     "next": "^14.2.7",
     "postgres": "^3.4.4",
@@ -33,7 +33,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10",
-    "drizzle-kit": "^0.22.8",
+    "drizzle-kit": "^0.25.0",
     "postcss": "^8",
     "prettier": "^3.3.0",
     "prettier-plugin-tailwindcss": "^0.6.1",
