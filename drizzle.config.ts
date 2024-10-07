@@ -5,10 +5,10 @@ if (!process.env.DATABASE_URL) {
 }
 
 export default defineConfig({
-  dialect: "sqlite",
+  dialect: "postgresql",
   schema: "./db/schema.ts",
   dbCredentials: {
-    url: "./sqlite/sqlite.db",
+    url: process.env.DATABASE_URL,
   },
   migrations: {
     table: "migrations",

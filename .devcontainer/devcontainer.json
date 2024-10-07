@@ -1,0 +1,16 @@
+{
+  "name": "Node + PG",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker",
+        "YoavBls.pretty-ts-errors",
+        "bradlc.vscode-tailwindcss"
+      ]
+    }
+  }
+}

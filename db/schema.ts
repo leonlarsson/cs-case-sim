@@ -1,26 +1,33 @@
-import { sqliteTable, index, integer, text } from "drizzle-orm/sqlite-core";
+import {
+  pgTable,
+  index,
+  text,
+  boolean,
+  serial,
+  uuid,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 
 // To update the DB, modify this file and run "npm run db:push".
 // This is because I don't use migrations yet because this schema already exists in the DB, and I can't add indexes easily because they already exist.
 // To watch: --no-init: https://github.com/drizzle-team/drizzle-orm/discussions/2624
 
-export const unboxes = sqliteTable(
+export const unboxes = pgTable(
   "unboxes",
   {
-    id: integer("id").primaryKey().notNull(),
+    // Make this a generated column (max(id) + 1)
+    id: serial("id").primaryKey(),
     caseId: text("case_id")
       .notNull()
       .references(() => cases.id),
     itemId: text("item_id")
       .notNull()
       .references(() => items.id),
-    isStatTrak: integer("is_stat_trak", { mode: "boolean" })
-      .default(false)
-      .notNull(),
-    unboxerId: text("unboxer_id").notNull(),
-    unboxedAt: text("unboxed_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+    isStatTrak: boolean("is_stat_trak").default(false).notNull(),
+    unboxerId: uuid("unboxer_id").notNull(),
+    unboxedAt: timestamp("unboxed_at", { withTimezone: true })
+      .defaultNow()
       .notNull(),
   },
   table => {
@@ -42,18 +49,18 @@ export const unboxesRelations = relations(unboxes, ({ one }) => ({
   }),
 }));
 
-export const cases = sqliteTable("cases", {
-  id: text("id").primaryKey().notNull(),
+export const cases = pgTable("cases", {
+  id: text("id").primaryKey(),
   type: text("type"),
   name: text("name").notNull(),
   description: text("description"),
   image: text("image").notNull(),
 });
 
-export const items = sqliteTable(
+export const items = pgTable(
   "items",
   {
-    id: text("id").primaryKey().notNull(),
+    id: text("id").primaryKey(),
     name: text("name").notNull(),
     description: text("description"),
     image: text("image").notNull(),
