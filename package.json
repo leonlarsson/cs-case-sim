@@ -1,6 +1,6 @@
 {
-  "name": "cs2-case-ui-react",
-  "version": "0.1.0",
+  "name": "cs-case-sim",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -18,9 +18,6 @@
     "db:seed": "npm run db:insert-cases && npm run db:insert-items"
   },
   "dependencies": {
-    "@planetscale/database": "^1.19.0",
-    "@vercel/functions": "^1.4.1",
-    "better-sqlite3": "^11.3.0",
     "drizzle-orm": "^0.33.0",
     "howler": "^2.2.4",
     "next": "^14.2.7",
@@ -31,7 +28,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.11",
     "@types/howler": "^2.2.11",
     "@types/node": "^20",
     "@types/react": "^18",

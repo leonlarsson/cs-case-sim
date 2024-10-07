@@ -64,11 +64,8 @@ export default ({ caseId }: { caseId: string }) => {
   };
 
   const openCase = async (dontOpenDialog?: boolean) => {
-    console.time("client: openCase");
     setUnlockButtonDisabled(true);
-    console.time("client: function unboxCase");
     const unbox = await unboxCase(caseId);
-    console.timeEnd("client: function unboxCase");
 
     if (!unbox) {
       alert("Error unboxing item: Invalid case ID");
@@ -114,7 +111,6 @@ export default ({ caseId }: { caseId: string }) => {
 
     if (dontOpenDialog) return;
     unboxedDialogRef.current?.showModal();
-    console.timeEnd("client: openCase");
   };
 
   return (
