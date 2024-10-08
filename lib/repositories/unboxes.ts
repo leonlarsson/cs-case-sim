@@ -103,7 +103,7 @@ export const addUnbox = async (
           isStatTrak,
           unboxerId,
         })
-        .returning();
+        .returning({ id: unboxes.id });
 
       const item = await tx.query.unboxes.findFirst({
         where: eq(unboxes.id, insertedUnbox.id),
