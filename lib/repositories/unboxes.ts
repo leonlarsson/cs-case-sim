@@ -7,16 +7,6 @@ import db from "@/db";
 import { items, stats, unboxes } from "@/db/schema";
 import { getOrCreateUnboxerIdCookie } from "./cookies";
 
-/** Gets an unbox with all relations by id. */
-export const findUnboxById = async (id: number) =>
-  db.query.unboxes.findFirst({
-    where: eq(unboxes.id, id),
-    with: {
-      item: true,
-      case: true,
-    },
-  });
-
 /** Gets the 100 latest unboxes. */
 export const getFilteredUnboxes = async (
   onlyCoverts?: boolean,
@@ -41,7 +31,7 @@ export const getFilteredUnboxes = async (
         ? itemIsPersonal(await getOrCreateUnboxerIdCookie())
         : undefined,
     ),
-    orderBy: [desc(unboxes.id)],
+    orderBy: [desc(unboxes.unboxedAt)],
     limit: 100,
   });
 };

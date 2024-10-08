@@ -32,7 +32,7 @@ export default async ({
           return (
             <div
               key={unbox.id}
-              title={`Unboxed on ${new Date(unbox.unboxedAt).toLocaleString()} UTC from ${
+              title={`Unboxed on ${unbox.unboxedAt.toLocaleString("se")} UTC from ${
                 unbox.case.name
               }\n\nClick to open case.`}
             >
