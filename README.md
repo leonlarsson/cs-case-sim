@@ -22,3 +22,22 @@ A toy project to simulate opening cases in Counter-Strike. Built with Next.js, T
 5. Next.js app: Use the Coolify terminal to run `npm run db:sync` and `npm run db:seed`
 6. The app should now be running
 7. To import data, run the following command from Windows: `type path/to/data.sql | ssh root@<IP> "docker exec -i <running PG container id> psql -U postgres -d case_sim"`
+
+## PlanetScale migration plan:
+
+### PlanetScale
+
+1. Run `npm run db:delete-old-non-coverts` on production data
+2. Create a dev branch and seed it with production data
+3. Remove any unused columns (except `item_name` for now)
+4. Add a new column `is_stat_trak` to the `case_sim_items` table
+5. If `item_name` contains "StatTrak", set `is_stat_trak` to `TRUE`
+6. Remove the `item_name` column
+7. Use the PlanetScale CLI to dump the dev branch
+8. Take note of the current amount of unboxes / covert unboxes (`max(id)` and `count(*)` respectively)
+
+### Data import
+
+1. Dev: Import .sql file(s) using either Drizzle Studio or execing into the db container
+2. Prod: Import .sql file(s) using the following command from Windows: `type path/to/data.sql | ssh root@<IP> "docker exec -i <running PG container id> psql -U postgres -d case_sim"`. This will SSH into my VPS, exec into the running PG container, and run the psql command to import the data
+3. Both: Set the values in the `settings` table with the total amount of unboxes and covert unboxes as noted earlier
