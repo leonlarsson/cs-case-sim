@@ -1,9 +1,10 @@
 "use server";
 
-import db from "@/db";
+import { waitUntil } from "@vercel/functions";
 import { z } from "zod";
-import { items, unboxes } from "@/db/schema";
-import { and, count, desc, eq, inArray, max, sql } from "drizzle-orm";
+import { and, count, desc, eq, inArray, sql } from "drizzle-orm";
+import db from "@/db";
+import { items, stats, unboxes } from "@/db/schema";
 import { getOrCreateUnboxerIdCookie } from "./cookies";
 
 /** Gets an unbox with all relations by id. */
@@ -49,22 +50,31 @@ export const getTotalFilteredUnboxes = async (
   onlyCoverts?: boolean,
   onlyPersonal?: boolean,
 ): Promise<number> => {
-  const query = await db
-    .select({
-      value: onlyCoverts || onlyPersonal ? count() : max(unboxes.id),
-    })
+  // If we're not filtering by personal unboxes, get the value from the stats table
+  if (!onlyPersonal) {
+    const result = await db.query.stats.findFirst({
+      columns: { value: true },
+      where: eq(
+        stats.name,
+        onlyCoverts ? "total_unboxes_coverts" : "total_unboxes_all",
+      ),
+    });
+
+    return result?.value ?? 0;
+  }
+
+  const result = await db
+    .select({ count: count() })
     .from(unboxes)
     .where(
       and(
+        itemIsPersonal(await getOrCreateUnboxerIdCookie()),
         onlyCoverts ? itemIsCovert : undefined,
-        onlyPersonal
-          ? itemIsPersonal(await getOrCreateUnboxerIdCookie())
-          : undefined,
       ),
     )
     .leftJoin(items, eq(unboxes.itemId, items.id));
 
-  return query[0].value ?? 0;
+  return result[0].count ?? 0;
 };
 
 export const getTotalUnboxesLast24Hours = async (): Promise<number> => {
@@ -112,8 +122,30 @@ export const addUnbox = async (
           case: true,
         },
       });
+
       return item;
     });
+
+    if (insertedUnbox) {
+      waitUntil(
+        db
+          .insert(stats)
+          .values([
+            // Always increment total unboxes
+            { name: "total_unboxes_all", value: 1 },
+            // Increment total covert unboxes if the item is covert
+            ...(["Covert", "Extraordinary"].includes(insertedUnbox.item.rarity)
+              ? [{ name: "total_unboxes_coverts" as const, value: 1 }]
+              : []),
+          ])
+          // If the row already exists (which it will 99.9% of the time), increment the value instead
+          .onConflictDoUpdate({
+            target: stats.name,
+            set: { value: sql`${stats.value} + 1` },
+          })
+          .execute(),
+      );
+    }
 
     return insertedUnbox;
   } catch (error) {
@@ -122,6 +154,6 @@ export const addUnbox = async (
   }
 };
 
-// Utils
+// Query utils
 const itemIsCovert = inArray(items.rarity, ["Covert", "Extraordinary"]);
 const itemIsPersonal = (id: string) => eq(unboxes.unboxerId, id);

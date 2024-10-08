@@ -3,11 +3,17 @@ import { relations } from "drizzle-orm";
 
 // To update the DB, modify this file and run "npm run db:sync"
 
+export const stats = pgTable("stats", t => ({
+  name: t
+    .text({ enum: ["total_unboxes_all", "total_unboxes_coverts"] })
+    .primaryKey(),
+  value: t.integer().default(0).notNull(),
+}));
+
 export const unboxes = pgTable(
   "unboxes",
   t => ({
-    // TODO: Make this a generated column (max(id) + 1) or switch to MySQL
-    id: t.serial().primaryKey(),
+    id: t.integer().primaryKey().generatedByDefaultAsIdentity(),
     caseId: t
       .text()
       .notNull()

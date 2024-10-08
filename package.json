@@ -17,6 +17,7 @@
     "db:seed": "npm run db:insert-cases && npm run db:insert-items"
   },
   "dependencies": {
+    "@vercel/functions": "^1.4.2",
     "drizzle-orm": "^0.34.1",
     "howler": "^2.2.4",
     "next": "^14.2.7",
