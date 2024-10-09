@@ -38,6 +38,6 @@ A toy project to simulate opening cases in Counter-Strike. Built with Next.js, T
 
 ### Data import
 
-1. Dev: Import .sql file(s) using either Drizzle Studio or execing into the db container
-2. Prod: Import .sql file(s) using the following command from Windows: `type path/to/data.sql | ssh root@<IP> "docker exec -i <running PG container id> psql -U postgres -d case_sim"`. This will SSH into my VPS, exec into the running PG container, and run the psql command to import the data
+1. Dev: Import .sql file(s) by running `type data.sql | docker exec -i db psql -U postgres -d case_sim`
+2. Prod: Import .sql file(s) using the following command from Windows: `type data.sql | ssh root@<IP> "docker exec -i <running PG container id> psql -U postgres -d case_sim"`. This will SSH into my VPS, exec into the running PG container, and run the psql command to import the data
 3. Both: Set the values in the `settings` table with the total amount of unboxes and covert unboxes as noted earlier
