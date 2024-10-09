@@ -5,13 +5,12 @@ import { useAudio } from "./AudioProvider";
 import UnboxedDialog from "./UnboxedDialog";
 import StatsAndHistoryDialog from "./StatsAndHistoryDialog";
 import Button from "./Button";
+import { ItemType } from "@/types";
 import { unboxCase } from "@/lib/actions";
-import { LocalStorageItem, UnboxWithAllRelations } from "@/types";
-import dbUnboxToLocalStorageItem from "@/utils/dbUnboxToLocalStorageItem";
 
 export default ({ caseId }: { caseId: string }) => {
-  const [unboxedItems, setUnboxedItems] = useState<LocalStorageItem[]>([]);
-  const [unbox, setUnbox] = useState<UnboxWithAllRelations | null>(null);
+  const [unboxedItems, setUnboxedItems] = useState<ItemType[]>([]);
+  const [unboxedItem, setUnboxedItem] = useState<ItemType | null>(null);
   const [unlockButtonDisabled, setUnlockButtonDisabled] = useState(false);
   const unboxedDialogRef = useRef<HTMLDialogElement>(null);
   const historyDialogRef = useRef<HTMLDialogElement>(null);
@@ -27,12 +26,9 @@ export default ({ caseId }: { caseId: string }) => {
 
   // Load unboxed items from localStorage
   useEffect(() => {
-    // Remove old structure of unboxed items
-    localStorage.removeItem("unboxedItemsNew");
-
     try {
       setUnboxedItems(
-        JSON.parse(localStorage.getItem("unboxedItemsV2") || "[]"),
+        JSON.parse(localStorage.getItem("unboxedItemsNew") || "[]"),
       );
     } catch (error) {
       setUnboxedItems([]);
@@ -48,33 +44,32 @@ export default ({ caseId }: { caseId: string }) => {
     }, 1);
   };
 
-  const playSoundBasedOnRarity = (unbox: UnboxWithAllRelations) => {
+  const playSoundBasedOnRarity = (openedItem: ItemType) => {
     if (
       ["Consumer Grade", "Industrial Grade", "Mil-Spec Grade"].includes(
-        unbox.item.rarity,
+        openedItem.rarity.name,
       )
     )
       milspecOpenSound.play();
 
-    if (unbox.item.rarity === "Restricted") restrictedOpenSound.play();
-    if (unbox.item.rarity === "Classified") classifiedOpenSound.play();
-    if (unbox.item.rarity === "Covert" && !unbox.item.name.includes("★"))
+    if (openedItem.rarity.name === "Restricted") restrictedOpenSound.play();
+    if (openedItem.rarity.name === "Classified") classifiedOpenSound.play();
+    if (openedItem.rarity.name === "Covert" && !openedItem.name.includes("★"))
       covertOpenSound.play();
-    if (unbox.item.name.includes("★")) goldOpenSound.play();
+    if (openedItem.name.includes("★")) goldOpenSound.play();
   };
 
   const openCase = async (dontOpenDialog?: boolean) => {
     setUnlockButtonDisabled(true);
-    const unbox = await unboxCase(caseId);
-
-    if (!unbox) {
+    const openedItem = await unboxCase(caseId);
+    if (!openedItem) {
       alert("Error unboxing item: Invalid case ID");
       setUnlockButtonDisabled(false);
       return;
     }
 
     // If the item is Covert or RSI, wait for 2 seconds before enabling the unlock button
-    if (unbox.item.name.includes("★") || unbox.item.rarity === "Covert") {
+    if (openedItem.name.includes("★") || openedItem.rarity.name === "Covert") {
       setTimeout(() => {
         setUnlockButtonDisabled(false);
         focusRetryButton();
@@ -84,28 +79,32 @@ export default ({ caseId }: { caseId: string }) => {
       focusRetryButton();
     }
 
-    setUnbox(unbox);
-
-    setUnboxedItems([dbUnboxToLocalStorageItem(unbox), ...unboxedItems]);
+    setUnboxedItem(openedItem);
+    setUnboxedItems([openedItem, ...unboxedItems]);
     localStorage.setItem(
-      "unboxedItemsV2",
-      JSON.stringify([dbUnboxToLocalStorageItem(unbox), ...unboxedItems]),
+      "unboxedItemsNew",
+      JSON.stringify([openedItem, ...unboxedItems]),
     );
 
     // Stop all sounds and play sound based on item grade
     stopAllSounds();
 
     // Play sound based on item grade
-    playSoundBasedOnRarity(unbox);
+    playSoundBasedOnRarity(openedItem);
 
     // Disable the unlock button for 2 seconds if the item is a Covert or RSI
-    if (unbox.item.name.includes("★") || unbox.item.rarity === "Covert") {
+    if (openedItem.name.includes("★") || openedItem.rarity.name === "Covert") {
       setUnlockButtonDisabled(true);
       setTimeout(() => {
         setUnlockButtonDisabled(false);
 
         // Focus the retry button
-        focusRetryButton();
+        setTimeout(() => {
+          const button = [...document.querySelectorAll("button")].find(
+            x => x.innerText === "RETRY",
+          );
+          button?.focus();
+        }, 1);
       }, 2000);
     }
 
@@ -135,7 +134,7 @@ export default ({ caseId }: { caseId: string }) => {
       <UnboxedDialog
         historyDialogRef={historyDialogRef}
         unboxedDialogRef={unboxedDialogRef}
-        unbox={unbox}
+        item={unboxedItem}
         unlockButtonDisabled={unlockButtonDisabled}
         openCaseFunc={openCase}
       />
@@ -144,6 +143,7 @@ export default ({ caseId }: { caseId: string }) => {
       <StatsAndHistoryDialog
         historyDialogRef={historyDialogRef}
         unboxedItems={unboxedItems}
+        setUnboxedItems={setUnboxedItems}
       />
     </>
   );

@@ -3,22 +3,22 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Item from "./Item";
-import { APIItem, ItemGrade } from "@/types";
+import { GradeType, ItemType } from "@/types";
 
 export default ({ onlyCoverts }: { onlyCoverts: boolean }) => {
-  const [unboxedItems, setUnboxedItems] = useState<APIItem[]>([]);
+  const [unboxedItems, setUnboxedItems] = useState<ItemType[]>([]);
 
   // Load unboxed items from localStorage
   useEffect(() => {
     try {
       const unboxedItemsLocalStorage = JSON.parse(
-        localStorage.getItem("unboxedItemsV2") || "[]",
+        localStorage.getItem("unboxedItemsNew") || "[]",
       );
       setUnboxedItems(
         onlyCoverts
           ? unboxedItemsLocalStorage
               .filter(
-                (item: APIItem) =>
+                (item: ItemType) =>
                   item.rarity.name === "Covert" ||
                   item.rarity.name === "Extraordinary",
               )
@@ -58,7 +58,7 @@ export default ({ onlyCoverts }: { onlyCoverts: boolean }) => {
               grade={
                 item.name.includes("★")
                   ? "Rare Special Item"
-                  : (item.rarity.name as ItemGrade)
+                  : (item.rarity.name as GradeType)
               }
               image={item.image}
             />
@@ -78,12 +78,12 @@ export const TotalSpend = ({ onlyCoverts }: { onlyCoverts: boolean }) => {
   useEffect(() => {
     try {
       const unboxedItemsLocalStorage = JSON.parse(
-        localStorage.getItem("unboxedItemsV2") || "[]",
+        localStorage.getItem("unboxedItemsNew") || "[]",
       );
       setUnboxedItemsAmount(
         onlyCoverts
           ? unboxedItemsLocalStorage.filter(
-              (item: APIItem) =>
+              (item: ItemType) =>
                 item.rarity.name === "Covert" ||
                 item.rarity.name === "Extraordinary",
             ).length

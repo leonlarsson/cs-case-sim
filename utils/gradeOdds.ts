@@ -1,7 +1,7 @@
-import { ItemGrade } from "@/types";
+import { GradeType } from "@/types";
 
 type GradeOddsType = {
-  [grade in ItemGrade]: number;
+  [grade in GradeType]: number;
 };
 
 export const gradeOddsCase = {

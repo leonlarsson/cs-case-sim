@@ -7,12 +7,12 @@ import CasePicker from "@/components/CasePicker";
 import AboutButtonWithModal from "@/components/AboutButtonWithModal";
 import UnlockButton from "@/components/UnlockButton";
 import Button from "@/components/Button";
-import { APICase, CasePickerCase } from "@/types";
+import { CaseDataType, CasePickerCaseType } from "@/types";
 import CaseItems from "@/components/CaseItems";
 
 // Just get the metadata for the cases
 // Used in the CasePicker component and for the page title
-const casesMetadata: CasePickerCase[] = [
+const casesMetadata: CasePickerCaseType[] = [
   ...casesLocal.toReversed(),
   ...customCasesLocal,
   ...souvenirCasesLocal.toReversed(),
@@ -65,7 +65,7 @@ export default async function Home({ searchParams }: PageProps) {
   // Combine the case data arrays
   // This is not visual at all, so the order doesn't matter
   // The only place where the order matters is in the CasePicker component, which uses the casesMetadata array above
-  const casesData: APICase[] = [
+  const casesData: CaseDataType[] = [
     // ...cases,
     ...casesLocal,
     ...customCasesLocal,

@@ -1,19 +1,18 @@
 import { defineConfig } from "drizzle-kit";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL is required");
-}
-
 export default defineConfig({
-  dialect: "postgresql",
+  dialect: "mysql",
   schema: "./db/schema.ts",
-  casing: "snake_case",
-  dbCredentials: {
-    url: process.env.DATABASE_URL,
-  },
   migrations: {
-    table: "migrations",
+    table: "case_sim_migrations",
   },
+  dbCredentials: {
+    url: process.env.DATABASE_URL!.replace(
+      "?sslaccept=strict",
+      '?ssl={"rejectUnauthorized":true}',
+    ),
+  },
+  tablesFilter: ["case_sim_*"],
   // Print all statements
   verbose: true,
   // Always ask for confirmation

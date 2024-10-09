@@ -5,9 +5,13 @@ import { useAudio } from "./AudioProvider";
 import { useRouter, useSearchParams } from "next/navigation";
 import Button from "./Button";
 import Icons from "./icons";
-import { CasePickerCase } from "@/types";
+import { CasePickerCaseType } from "@/types";
 
-export default ({ availableCases }: { availableCases: CasePickerCase[] }) => {
+export default ({
+  availableCases,
+}: {
+  availableCases: CasePickerCaseType[];
+}) => {
   const router = useRouter();
   const [favoriteCases, setFavoriteCases] = useState<string[]>([]);
   const [caseSearch, setCaseSearch] = useState("");
@@ -16,7 +20,7 @@ export default ({ availableCases }: { availableCases: CasePickerCase[] }) => {
   const caseParam = useSearchParams().get("case");
   const { buttonClickAlternativeSound, caseSelectSound } = useAudio();
 
-  const featuredCases: CasePickerCase[] = [
+  const featuredCases: CasePickerCaseType[] = [
     availableCases.find(x => x.id === "crate-7003")!,
   ];
 
@@ -242,7 +246,7 @@ const Case = ({
   selectCase,
   toggleFavoriteCase,
 }: {
-  caseData: CasePickerCase;
+  caseData: CasePickerCaseType;
   isFavorite: boolean;
   isCurrentCase?: boolean;
   showToggleFavoriteButton?: boolean;

@@ -1,6 +1,6 @@
 "use client";
 
-import { ItemGrade } from "@/types";
+import { GradeType } from "@/types";
 import { useAudio } from "./AudioProvider";
 import gradeColors from "@/utils/gradeColors";
 
@@ -8,7 +8,7 @@ type Props = {
   itemName: string;
   skinName?: string;
   image?: string;
-  grade?: ItemGrade;
+  grade?: GradeType;
   isSpecial?: boolean;
 };
 

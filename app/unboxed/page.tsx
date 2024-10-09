@@ -5,11 +5,11 @@ import SettingsCheckboxes from "@/components/SettingsCheckboxes";
 import GlobalItemHistory from "@/components/GlobalItemHistory";
 import Button from "@/components/Button";
 import Icons from "@/components/icons";
-import { formatDecimal } from "@/utils/formatters";
 import {
-  getTotalFilteredUnboxes,
-  getTotalUnboxesLast24Hours,
-} from "@/lib/repositories/unboxes";
+  getTotalItemsFromDB,
+  getTotalItemsFromDBLast24Hours,
+} from "@/lib/actions";
+import { formatDecimal } from "@/utils/formatters";
 
 export const metadata = {
   title: "Global Unbox History | Counter-Strike Case Simulator",
@@ -92,9 +92,10 @@ const TotalSpend = async ({
   onlyPersonal: boolean;
 }) => {
   const [totalUnboxed, totalUnboxed24h] = await Promise.all([
-    getTotalFilteredUnboxes(onlyCoverts, onlyPersonal),
-    getTotalUnboxesLast24Hours(),
+    getTotalItemsFromDB(onlyCoverts, onlyPersonal),
+    getTotalItemsFromDBLast24Hours(),
   ]);
+  if (totalUnboxed === false || totalUnboxed24h === false) return null;
 
   return (
     <span className="text-center">

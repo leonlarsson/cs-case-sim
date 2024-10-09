@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-export default {
+const nextConfig = {
   // For when deployed with Docker (on Railway, etc.)
   // output: "standalone",
   images: {
@@ -21,3 +21,5 @@ export default {
     },
   },
 };
+
+module.exports = nextConfig;

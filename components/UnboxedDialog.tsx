@@ -4,28 +4,27 @@ import Link from "next/link";
 import Button from "./Button";
 import gradeColors from "@/utils/gradeColors";
 import Icons from "./icons";
-import { ItemGrade, UnboxWithAllRelations } from "@/types";
-import statTrakifyName from "@/utils/statTrakifyName";
+import { GradeType, ItemType } from "@/types";
 
 type Props = {
   unboxedDialogRef: React.MutableRefObject<HTMLDialogElement | null>;
   historyDialogRef: React.MutableRefObject<HTMLDialogElement | null>;
-  unbox: UnboxWithAllRelations | null;
+  item: ItemType | null;
   unlockButtonDisabled: boolean;
   openCaseFunc: (dontOpenDialog?: boolean) => void;
 };
 export default ({
   unboxedDialogRef,
   historyDialogRef,
-  unbox,
+  item,
   unlockButtonDisabled,
   openCaseFunc,
 }: Props) => {
   const itemShareUrl = new URL("https://twitter.com/intent/tweet");
   itemShareUrl.searchParams.set(
     "text",
-    `I unboxed a ${statTrakifyName(unbox?.item.name ?? "", unbox?.isStatTrak ?? false)}${
-      unbox?.item.phase ? ` (${unbox?.item.phase})` : ""
+    `I unboxed a ${item?.name}${
+      item?.phase ? ` (${item.phase})` : ""
     } in the Counter-Strike Case Simulator!\n\nTry here:`,
   );
   itemShareUrl.searchParams.set("url", "case-sim.com");
@@ -33,7 +32,7 @@ export default ({
   const steamMarketUrl = new URL(
     "https://steamcommunity.com/market/search?appid=730",
   );
-  steamMarketUrl.searchParams.set("q", unbox?.item.name ?? "");
+  steamMarketUrl.searchParams.set("q", item?.name ?? "");
 
   return (
     <dialog
@@ -44,18 +43,18 @@ export default ({
         <div
           className="border-b-[12px] bg-[#262626]/70 p-3 text-3xl font-semibold text-neutral-400"
           style={{
-            borderColor: unbox?.item.name.includes("★")
+            borderColor: item?.name.includes("★")
               ? gradeColors["Rare Special Item"]
-              : gradeColors[unbox?.item.rarity as ItemGrade],
+              : gradeColors[item?.rarity.name as GradeType],
           }}
         >
           <span>
             You got a{" "}
             <span
               style={{
-                color: unbox?.item.name.includes("★")
+                color: item?.name.includes("★")
                   ? gradeColors["Rare Special Item"]
-                  : gradeColors[unbox?.item.rarity as ItemGrade],
+                  : gradeColors[item?.rarity.name as GradeType],
               }}
             >
               <Link
@@ -63,23 +62,25 @@ export default ({
                 target="_blank"
                 title="Share this pull on X / Twitter!"
               >
-                {statTrakifyName(
-                  unbox?.item.name ?? "",
-                  unbox?.isStatTrak ?? false,
-                )}{" "}
-                {unbox?.item.phase ? ` (${unbox?.item.phase})` : ""}
+                {item?.name} {item?.phase ? ` (${item.phase})` : ""}
               </Link>
             </span>
           </span>
+
+          {item?.extra?.description && (
+            <div className="whitespace-pre text-xl">
+              {item.extra.description}
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col p-2">
-          {unbox?.item && (
+          {item && (
             <div>
               <img
-                key={unbox?.item.id}
-                src={unbox?.item.image}
-                alt={`${unbox?.item.name} image`}
+                key={item.id}
+                src={item.image}
+                alt={`${item.name} image`}
                 width={512}
                 height={384}
                 draggable={false}

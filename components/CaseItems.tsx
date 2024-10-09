@@ -1,9 +1,9 @@
-import { APIItem, ItemGrade } from "@/types";
+import { GradeType, ItemType } from "@/types";
 import Item from "./Item";
 
 type Props = {
-  items: APIItem[];
-  rareItems: APIItem[];
+  items: ItemType[];
+  rareItems: ItemType[];
 };
 
 export default ({ items, rareItems }: Props) => {
@@ -15,7 +15,7 @@ export default ({ items, rareItems }: Props) => {
           itemName={item.name.split(" | ")[0]}
           skinName={item.name.split(" | ")[1]}
           image={item.image}
-          grade={item.rarity.name as ItemGrade}
+          grade={item.rarity.name as GradeType}
         />
       ))}
 
