@@ -1,42 +1,70 @@
-import {
-  mysqlTable,
-  index,
-  primaryKey,
-  int,
-  varchar,
-  datetime,
-} from "drizzle-orm/mysql-core";
-import { sql } from "drizzle-orm";
+import { pgTable, index } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 
-// To update the DB, modify this file and run "npm run db:push".
-// This is because I don't use migrations yet because this schema already exists in the DB, and I can't add indexes easily because they already exist.
-// To watch: --no-init: https://github.com/drizzle-team/drizzle-orm/discussions/2624
-export const items = mysqlTable(
-  "case_sim_items",
-  {
-    id: int("id").autoincrement().notNull(),
-    caseId: varchar("case_id", { length: 255 }).notNull(),
-    caseName: varchar("case_name", { length: 255 }).notNull(),
-    caseImage: varchar("case_image", { length: 600 }).notNull(),
-    itemId: varchar("item_id", { length: 255 }).notNull(),
-    itemName: varchar("item_name", { length: 255 }).notNull(),
-    itemImage: varchar("item_image", { length: 600 }).notNull(),
-    rarity: varchar("rarity", { length: 255 }).notNull(),
-    unboxedAt: datetime("unboxed_at", { mode: "date" }).default(
-      sql`(CURRENT_TIMESTAMP)`,
-    ),
-    phase: varchar("phase", { length: 50 }),
-    unboxerId: varchar("unboxer_id", { length: 36 }),
-  },
-  table => {
-    return {
-      idxRarity: index("idx_rarity").on(table.rarity),
-      idxUnboxerId: index("idx_unboxer_id").on(table.unboxerId),
-      idxUnboxedAt: index("idx_unboxed_at").on(table.unboxedAt),
-      caseSimItemsId: primaryKey({
-        columns: [table.id],
-        name: "case_sim_items_id",
-      }),
-    };
-  },
+// To update the DB, modify this file and run "npm run db:sync"
+
+export const stats = pgTable("stats", t => ({
+  name: t
+    .text({ enum: ["total_unboxes_all", "total_unboxes_coverts"] })
+    .primaryKey(),
+  value: t.integer().default(0).notNull(),
+}));
+
+export const unboxes = pgTable(
+  "unboxes",
+  t => ({
+    id: t.integer().primaryKey().generatedByDefaultAsIdentity(),
+    caseId: t
+      .text()
+      .notNull()
+      .references(() => cases.id),
+    itemId: t
+      .text()
+      .notNull()
+      .references(() => items.id),
+    isStatTrak: t.boolean().default(false).notNull(),
+    unboxerId: t.uuid().notNull(),
+    unboxedAt: t
+      .timestamp({ mode: "date", withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  }),
+  table => ({
+    idxUnboxerId: index().on(table.unboxerId),
+    idxUnboxedAt: index().on(table.unboxedAt),
+  }),
+);
+
+export const unboxesRelations = relations(unboxes, ({ one }) => ({
+  case: one(cases, {
+    fields: [unboxes.caseId],
+    references: [cases.id],
+  }),
+  item: one(items, {
+    fields: [unboxes.itemId],
+    references: [items.id],
+  }),
+}));
+
+export const cases = pgTable("cases", t => ({
+  id: t.text().primaryKey(),
+  type: t.text(),
+  name: t.text().notNull(),
+  description: t.text(),
+  image: t.text().notNull(),
+}));
+
+export const items = pgTable(
+  "items",
+  t => ({
+    id: t.text().primaryKey(),
+    name: t.text().notNull(),
+    description: t.text(),
+    image: t.text().notNull(),
+    rarity: t.text().notNull(),
+    phase: t.text(),
+  }),
+  table => ({
+    idxRarity: index().on(table.rarity),
+  }),
 );

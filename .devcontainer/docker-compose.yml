@@ -1,0 +1,28 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../..:/workspaces:cached
+    command: sleep infinity
+    network_mode: service:db
+    environment:
+      DATABASE_URL: postgres://postgres:password@db:5432/case_sim
+    depends_on:
+      - db
+
+  # When hosted through Coolify, the database is its own resource, with the credentials in there
+  # The Next.js app is running the Dockerfile at root, and uses the DATABASE_URL environment variable
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: case_sim
+
+volumes:
+  pgdata:

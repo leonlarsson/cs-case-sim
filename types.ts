@@ -1,33 +1,9 @@
-import { InferSelectModel } from "drizzle-orm";
-import { items } from "./db/schema";
+import { InferModelFromColumns, InferSelectModel } from "drizzle-orm";
+import { unboxes } from "./db/schema";
+import db from "./db";
 
-export type ItemType = {
-  /** Extra properties from custom case API */
-  extra?: {
-    // Description to display in unboxing modal
-    description?: string;
-  };
-  id: string;
-  name: string;
-  rarity: {
-    id: string;
-    name: string;
-    color: string;
-  };
-  phase?: string | null;
-  image: string;
-};
-
-export type GradeType =
-  | "Consumer Grade"
-  | "Industrial Grade"
-  | "Mil-Spec Grade"
-  | "Restricted"
-  | "Classified"
-  | "Covert"
-  | "Rare Special Item";
-
-export type CaseDataType = {
+/** APICase is the case structure from the API. */
+export type APICase = {
   /** Extra properties from custom cases */
   extra?: {
     // Case gold chance (0-1)
@@ -41,13 +17,57 @@ export type CaseDataType = {
   name: string;
   description: string | null;
   image: string;
-  contains: ItemType[];
-  contains_rare: ItemType[];
+  contains: APIItem[];
+  contains_rare: APIItem[];
 };
 
-export type CasePickerCaseType = Pick<
-  CaseDataType,
+/** ItemType is the item structure from the API. */
+export type APIItem = {
+  id: string;
+  name: string;
+  rarity: {
+    id: string;
+    name: string;
+    color: string;
+  };
+  phase?: string | null;
+  image: string;
+};
+
+/** LocalStorageItem is the item structure saved to local storage. */
+export type LocalStorageItem = {
+  id: string;
+  name: string;
+  rarity: string;
+  phase: string | null;
+};
+
+/** GradeType is the possible item rarities. */
+export type ItemGrade =
+  | "Consumer Grade"
+  | "Industrial Grade"
+  | "Mil-Spec Grade"
+  | "Restricted"
+  | "Classified"
+  | "Covert"
+  | "Rare Special Item";
+
+/** CasePickerCase is the APICase data being passed to the case picker */
+export type CasePickerCase = Pick<
+  APICase,
   "id" | "name" | "description" | "image" | "first_sale_date"
 >;
 
-export type ItemTypeDB = InferSelectModel<typeof items>;
+// DB types
+
+const query = db.query.unboxes.findMany({
+  with: {
+    item: true,
+    case: true,
+  },
+});
+
+/** UnboxWithAllRelations is the unbox item with all relations loaded. */
+export type UnboxWithAllRelations = Awaited<
+  ReturnType<(typeof query)["execute"]>
+>[number];

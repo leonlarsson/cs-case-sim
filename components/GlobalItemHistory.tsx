@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { getItemsFromDB } from "@/lib/actions";
 import Item from "./Item";
-import { GradeType } from "@/types";
+import { ItemGrade } from "@/types";
+import { getFilteredUnboxes } from "@/lib/repositories/unboxes";
+import statTrakifyName from "@/utils/statTrakifyName";
 
 export default async ({
   onlyCoverts,
@@ -10,11 +11,11 @@ export default async ({
   onlyCoverts: boolean;
   onlyPersonal: boolean;
 }) => {
-  const unboxedItems = await getItemsFromDB(onlyCoverts, onlyPersonal);
+  const unboxes = await getFilteredUnboxes(onlyCoverts, onlyPersonal);
 
   return (
     <div className="flex flex-wrap justify-center gap-8 px-2 lg:px-16">
-      {unboxedItems && unboxedItems.length === 0 && (
+      {unboxes && unboxes.length === 0 && (
         <span className="text-center">
           No items found. Go open some{" "}
           <Link href="/" className="font-medium hover:underline">
@@ -24,31 +25,29 @@ export default async ({
         </span>
       )}
 
-      {unboxedItems ? (
-        unboxedItems.map(item => {
-          const [itemName, skinName] = unboxedItems
-            ? item.itemName.split(" | ")
-            : [null, null];
+      {unboxes ? (
+        unboxes.map(unbox => {
+          const [itemName, skinName] = unbox.item.name.split(" | ");
 
           return (
             <div
-              key={item.id}
-              title={`Unboxed on ${item.unboxedAt?.toUTCString()} from ${
-                item.caseName
+              key={unbox.id}
+              title={`Unboxed on ${unbox.unboxedAt.toLocaleString("se")} UTC from ${
+                unbox.case.name
               }\n\nClick to open case.`}
             >
-              <Link href={`/?case=${item.caseId}`}>
+              <Link href={`/?case=${unbox.caseId}`}>
                 <Item
-                  itemName={itemName ?? ""}
-                  skinName={`${skinName ?? ""} ${
-                    item.phase ? ` (${item.phase})` : ""
+                  itemName={statTrakifyName(itemName, unbox.isStatTrak)}
+                  skinName={`${skinName} ${
+                    unbox.item.phase ? ` (${unbox.item.phase})` : ""
                   }`}
                   grade={
-                    item.itemName.includes("★")
+                    unbox.item.name.includes("★")
                       ? "Rare Special Item"
-                      : (item.rarity as GradeType)
+                      : (unbox.item.rarity as ItemGrade)
                   }
-                  image={item.itemImage}
+                  image={unbox.item.image}
                 />
               </Link>
             </div>
