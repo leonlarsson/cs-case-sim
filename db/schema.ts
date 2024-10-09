@@ -23,7 +23,7 @@ export const unboxes = pgTable(
       .notNull()
       .references(() => items.id),
     isStatTrak: t.boolean().default(false).notNull(),
-    unboxerId: t.uuid().notNull(),
+    unboxerId: t.uuid(),
     unboxedAt: t
       .timestamp({ mode: "date", withTimezone: true })
       .defaultNow()
