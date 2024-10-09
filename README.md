@@ -23,7 +23,7 @@ A toy project to simulate opening cases in Counter-Strike. Built with Next.js, T
 6. The app should now be running
 7. To import data, run the following command from Windows: `type path/to/data.sql | ssh root@<IP> "docker exec -i <running PG container id> psql -U postgres -d case_sim"`
 
-## PlanetScale migration plan:
+## PlanetScale migration plan (already done):
 
 ### PlanetScale
 
@@ -35,6 +35,7 @@ A toy project to simulate opening cases in Counter-Strike. Built with Next.js, T
 6. Remove the `item_name` column
 7. Use the PlanetScale CLI to dump the dev branch
 8. Take note of the current amount of unboxes / covert unboxes (`max(id)` and `count(*)` respectively)
+9. Do a bunch of find and replaces such as 0 -> false, 1 -> true
 
 ### Data import
 
