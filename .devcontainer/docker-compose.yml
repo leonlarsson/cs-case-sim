@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: app
     volumes:
       - ../..:/workspaces:cached
     command: sleep infinity
@@ -16,6 +17,7 @@ services:
   # The Next.js app is running the Dockerfile at root, and uses the DATABASE_URL environment variable
   db:
     image: postgres:16-alpine
+    container_name: db
     restart: unless-stopped
     volumes:
       - pgdata:/var/lib/postgresql/data
