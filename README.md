@@ -42,3 +42,10 @@ A toy project to simulate opening cases in Counter-Strike. Built with Next.js, T
 1. Dev: Import .sql file(s) by running `type data.sql | docker exec -i db psql -U postgres -d case_sim`
 2. Prod: Import .sql file(s) using the following command from Windows: `type data.sql | ssh root@<IP> "docker exec -i <running PG container id> psql -U postgres -d case_sim"`. This will SSH into my VPS, exec into the running PG container, and run the psql command to import the data
 3. Both: Set the values in the `settings` table with the total amount of unboxes and covert unboxes as noted earlier
+
+### Run Drizzle Studio locally against production DB
+
+1. Locally: Run `ssh -L 5432:<postgres_ip>:5432 root@<VPS_ip>`. This will open a tunnel to the VPS that you can run the next commands on
+2. Get the Postgres IP by running the following: `docker ps` -> grab the Posgres container ID -> `docker inspect <container_id> | grep "IPAddress"`
+3. Copy the Postgres URL from the Coolify resource and use that as the `DATABASE_URL`, but replace the host with `localhost:5432`
+4. Run `npm run db:studio` to open Drizzle Studio against the production DB
