@@ -31,5 +31,5 @@ export const middleware = (request: NextRequest) => {
 };
 
 export const config = {
-  matcher: ["/", "/unboxed", "/inventory"],
+  matcher: ["/", "/unboxed"],
 };

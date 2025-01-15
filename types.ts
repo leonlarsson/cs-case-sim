@@ -34,8 +34,8 @@ export type APIItem = {
   image: string;
 };
 
-/** LocalStorageItem is the item structure saved to local storage. */
-export type LocalStorageItem = {
+/** IndexedDBItem is the item structure saved to IndexedDB. */
+export type IndexedDBItem = {
   id: string;
   name: string;
   rarity: string;

@@ -18,6 +18,8 @@
   },
   "dependencies": {
     "@vercel/functions": "^1.4.2",
+    "dexie": "^4.0.10",
+    "dexie-react-hooks": "^1.1.7",
     "drizzle-orm": "^0.34.1",
     "howler": "^2.2.4",
     "next": "^14.2.7",

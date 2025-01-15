@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useAudio } from "./AudioProvider";
 import UnboxedDialog from "./UnboxedDialog";
 import StatsAndHistoryDialog from "./StatsAndHistoryDialog";
 import Button from "./Button";
 import { unboxCase } from "@/lib/actions";
-import { LocalStorageItem, UnboxWithAllRelations } from "@/types";
-import dbUnboxToLocalStorageItem from "@/utils/dbUnboxToLocalStorageItem";
+import { UnboxWithAllRelations } from "@/types";
+import { dbUnboxToIndexedDBItem } from "@/utils/dbUnboxToIndexedDBItem";
+import { indexedDb } from "@/db/idb";
 
 export default ({ caseId }: { caseId: string }) => {
-  const [unboxedItems, setUnboxedItems] = useState<LocalStorageItem[]>([]);
   const [unbox, setUnbox] = useState<UnboxWithAllRelations | null>(null);
   const [unlockButtonDisabled, setUnlockButtonDisabled] = useState(false);
   const unboxedDialogRef = useRef<HTMLDialogElement>(null);
@@ -25,19 +25,12 @@ export default ({ caseId }: { caseId: string }) => {
     goldOpenSound,
   } = useAudio();
 
-  // Load unboxed items from localStorage
-  useEffect(() => {
-    // Remove old structure of unboxed items
-    localStorage.removeItem("unboxedItemsNew");
-
-    try {
-      setUnboxedItems(
-        JSON.parse(localStorage.getItem("unboxedItemsV2") || "[]"),
-      );
-    } catch (error) {
-      setUnboxedItems([]);
-    }
-  }, []);
+  // Maybe later
+  // useEffect(() => {
+  //   // Remove old structure of unboxed items
+  //   localStorage.removeItem("unboxedItemsNew");
+  //   localStorage.removeItem("unboxedItemsV2");
+  // }, []);
 
   const focusRetryButton = () => {
     setTimeout(() => {
@@ -86,11 +79,8 @@ export default ({ caseId }: { caseId: string }) => {
 
     setUnbox(unbox);
 
-    setUnboxedItems([dbUnboxToLocalStorageItem(unbox), ...unboxedItems]);
-    localStorage.setItem(
-      "unboxedItemsV2",
-      JSON.stringify([dbUnboxToLocalStorageItem(unbox), ...unboxedItems]),
-    );
+    // Save unboxed item to indexedDB
+    indexedDb.unboxedItems.add(dbUnboxToIndexedDBItem(unbox));
 
     // Stop all sounds and play sound based on item grade
     stopAllSounds();
@@ -141,10 +131,7 @@ export default ({ caseId }: { caseId: string }) => {
       />
 
       {/* STATS AND HISTORY DIALOG */}
-      <StatsAndHistoryDialog
-        historyDialogRef={historyDialogRef}
-        unboxedItems={unboxedItems}
-      />
+      <StatsAndHistoryDialog historyDialogRef={historyDialogRef} />
     </>
   );
 };

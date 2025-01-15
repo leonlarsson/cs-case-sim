@@ -1,7 +1,9 @@
-import { LocalStorageItem, UnboxWithAllRelations } from "@/types";
+import { IndexedDBItem, UnboxWithAllRelations } from "@/types";
 import statTrakifyName from "./statTrakifyName";
 
-export default (dbUnbox: UnboxWithAllRelations): LocalStorageItem => {
+export const dbUnboxToIndexedDBItem = (
+  dbUnbox: UnboxWithAllRelations,
+): IndexedDBItem => {
   return {
     id: dbUnbox.item.id,
     name: statTrakifyName(dbUnbox.item.name, dbUnbox.isStatTrak),

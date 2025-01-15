@@ -4,14 +4,18 @@ import Link from "next/link";
 import Button from "./Button";
 import gradeColors from "@/utils/gradeColors";
 import { formatDecimal, formatPercentage } from "@/utils/formatters";
-import { ItemGrade, LocalStorageItem } from "@/types";
+import { ItemGrade } from "@/types";
+import { useLiveQuery } from "dexie-react-hooks";
+import { indexedDb } from "@/db/idb";
 
 type Props = {
   historyDialogRef: React.MutableRefObject<HTMLDialogElement | null>;
-  unboxedItems: LocalStorageItem[];
 };
 
-export default ({ historyDialogRef, unboxedItems }: Props) => {
+export default ({ historyDialogRef }: Props) => {
+  const unboxedItems =
+    useLiveQuery(() => indexedDb.unboxedItems.reverse().toArray()) ?? [];
+
   return (
     <dialog
       className="mx-auto w-full max-w-lg border-[1px] border-white/30 bg-[#2d2d2d]/50 text-xl text-white backdrop-blur-xl backdrop:bg-black/30 backdrop:backdrop-blur-sm"
@@ -25,10 +29,6 @@ export default ({ historyDialogRef, unboxedItems }: Props) => {
         <span className="p-2">
           To see a list of the last items unboxed by the entire community, go{" "}
           <Link className="font-semibold hover:underline" href="/unboxed">
-            here
-          </Link>
-          . To see your own, go{" "}
-          <Link className="font-semibold hover:underline" href="/inventory">
             here
           </Link>
           .
@@ -174,9 +174,8 @@ export default ({ historyDialogRef, unboxedItems }: Props) => {
           <div className="mt-3 flex justify-between">
             <Button
               variant="danger"
-              onClick={() => {
-                localStorage.setItem("unboxedItemsV2", "[]");
-                location.reload();
+              onClick={async () => {
+                indexedDb.unboxedItems.clear();
               }}
             >
               CLEAR HISTORY
