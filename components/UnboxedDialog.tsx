@@ -75,13 +75,22 @@ export default ({
 
         <div className="flex flex-col p-2">
           {unbox?.item && (
-            <div>
+            <div key={unbox?.item.id} className="flex justify-center">
               <img
-                key={unbox?.item.id}
+                className="block [@media_(max-height:580px)]:hidden"
                 src={unbox?.item.image}
                 alt={`${unbox?.item.name} image`}
                 width={512}
                 height={384}
+                draggable={false}
+              />
+
+              <img
+                className="hidden [@media_(max-height:580px)]:block"
+                src={unbox?.item.image}
+                alt={`${unbox?.item.name} image`}
+                width={512 / 2.7}
+                height={384 / 2.7}
                 draggable={false}
               />
             </div>
