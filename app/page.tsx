@@ -114,7 +114,7 @@ export default async function Home({ searchParams }: PageProps) {
         <h1 className="text-4xl font-medium text-white">Unlock Container</h1>
         <h4 className="text-xl">
           Unlock <span className="font-semibold">{selectedCase.name}</span>
-          <span className="hidden max-[500px]:inline">
+          <span className="hidden max-[500px]:inline [@media_(max-height:500px)]:inline">
             {" "}
             <img
               className="inline"
@@ -127,7 +127,7 @@ export default async function Home({ searchParams }: PageProps) {
         </h4>
 
         <img
-          className="block max-[500px]:hidden"
+          className="block max-[500px]:hidden [@media_(max-height:500px)]:hidden"
           src={selectedCase.image}
           alt={`${selectedCase.name} image`}
           width={256 / 1.7}
@@ -149,7 +149,7 @@ export default async function Home({ searchParams }: PageProps) {
           <hr className="my-2 opacity-30" />
         </div>
 
-        <div className="flex max-h-96 flex-wrap gap-8 overflow-auto px-4 pb-2 max-[500px]:flex-nowrap min-[800px]:px-16">
+        <div className="flex max-h-96 flex-wrap gap-8 overflow-auto px-4 pb-2 max-[500px]:flex-nowrap min-[800px]:px-16 [@media_(max-height:500px)]:flex-nowrap [@media_(max-height:500px)]:px-8">
           <CaseItems
             items={selectedCase.contains}
             rareItems={selectedCase.contains_rare}
