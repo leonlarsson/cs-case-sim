@@ -114,13 +114,24 @@ export default async function Home({ searchParams }: PageProps) {
         <h1 className="text-4xl font-medium text-white">Unlock Container</h1>
         <h4 className="text-xl">
           Unlock <span className="font-semibold">{selectedCase.name}</span>
+          <span className="hidden max-[500px]:inline">
+            {" "}
+            <img
+              className="inline"
+              src={selectedCase.image}
+              alt={`${selectedCase.name} image`}
+              width={48}
+              draggable={false}
+            />
+          </span>
         </h4>
 
         <img
+          className="block max-[500px]:hidden"
           src={selectedCase.image}
           alt={`${selectedCase.name} image`}
-          width={256}
-          height={256}
+          width={256 / 1.7}
+          height={256 / 1.7}
           draggable={false}
         />
       </div>
@@ -133,17 +144,12 @@ export default async function Home({ searchParams }: PageProps) {
               Contains one of the following:
             </span>
 
-            <div className="flex gap-1">
-              <Button href="/unboxed" variant="secondary-darker">
-                INSPECT ITEMS
-              </Button>
-              <AboutButtonWithModal />
-            </div>
+            <AboutButtonWithModal />
           </div>
           <hr className="my-2 opacity-30" />
         </div>
 
-        <div className="flex max-h-96 flex-wrap justify-center gap-8 overflow-auto px-2 lg:justify-start lg:px-16">
+        <div className="flex max-h-96 flex-wrap gap-8 overflow-auto px-4 pb-2 max-[500px]:flex-nowrap min-[800px]:px-16">
           <CaseItems
             items={selectedCase.contains}
             rareItems={selectedCase.contains_rare}
@@ -166,11 +172,11 @@ export default async function Home({ searchParams }: PageProps) {
           <div className="flex flex-wrap items-center gap-2">
             <UnlockButton caseId={selectedCase.id} />
 
-            <div className="mx-2 h-16 w-px bg-white/50" />
+            <div className="mx-2 hidden h-16 w-px bg-white/50 md:inline" />
 
             <Button
               variant="secondary"
-              className="cursor-not-allowed"
+              className="hidden cursor-not-allowed md:inline"
               playSoundOnClick={false}
             >
               CLOSE
