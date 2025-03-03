@@ -21,10 +21,15 @@ export default ({
   unlockButtonDisabled,
   openCaseFunc,
 }: Props) => {
+  const fullItemName =
+    unbox?.case.type === "Souvenir"
+      ? `Souvenir ${unbox?.item.name}`
+      : statTrakifyName(unbox?.item.name ?? "", unbox?.isStatTrak ?? false);
+
   const itemShareUrl = new URL("https://twitter.com/intent/tweet");
   itemShareUrl.searchParams.set(
     "text",
-    `I unboxed a ${statTrakifyName(unbox?.item.name ?? "", unbox?.isStatTrak ?? false)}${
+    `I unboxed a ${fullItemName}${
       unbox?.item.phase ? ` (${unbox?.item.phase})` : ""
     } in the Counter-Strike Case Simulator!\n\nTry here:`,
   );
@@ -63,10 +68,7 @@ export default ({
                 target="_blank"
                 title="Share this pull on X / Twitter!"
               >
-                {statTrakifyName(
-                  unbox?.item.name ?? "",
-                  unbox?.isStatTrak ?? false,
-                )}{" "}
+                {fullItemName}{" "}
                 {unbox?.item.phase ? ` (${unbox?.item.phase})` : ""}
               </Link>
             </span>

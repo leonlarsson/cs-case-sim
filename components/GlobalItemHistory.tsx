@@ -29,6 +29,11 @@ export default async ({
         unboxes.map(unbox => {
           const [itemName, skinName] = unbox.item.name.split(" | ");
 
+          const fullItemName =
+            unbox.case.type === "Souvenir"
+              ? `Souvenir ${itemName}`
+              : statTrakifyName(itemName, unbox.isStatTrak);
+
           return (
             <div
               key={unbox.id}
@@ -38,7 +43,7 @@ export default async ({
             >
               <Link href={`/?case=${unbox.caseId}`}>
                 <Item
-                  itemName={statTrakifyName(itemName, unbox.isStatTrak)}
+                  itemName={fullItemName}
                   skinName={`${skinName} ${
                     unbox.item.phase ? ` (${unbox.item.phase})` : ""
                   }`}
