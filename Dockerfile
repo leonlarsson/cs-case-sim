@@ -1,7 +1,7 @@
 # This entire file is borrowed from https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile
 # NOTE: I have updated to lts-alpine and added the sed command to uncomment output: "standalone" in next.config.js
 
-FROM node:22.9.0-alpine AS base
+FROM node:23.6.0-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps

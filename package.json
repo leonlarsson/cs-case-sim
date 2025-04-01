@@ -10,10 +10,10 @@
     "lint": "next lint",
     "prettier": "prettier . --write",
     "db:studio": "drizzle-kit studio",
-    "db:sync": "drizzle-kit push",
-    "db:delete-old-non-coverts": "node --experimental-strip-types ./db/scripts/deleteOldNonCoverts.ts",
-    "db:insert-cases": "node --experimental-strip-types ./db/scripts/insertCasesToDB.ts",
-    "db:insert-items": "node --experimental-strip-types ./db/scripts/insertItemsToDB.ts",
+    "db:push": "drizzle-kit push",
+    "db:delete-old-non-coverts": "node ./db/scripts/deleteOldNonCoverts.ts",
+    "db:insert-cases": "node ./db/scripts/insertCasesToDB.ts",
+    "db:insert-items": "node ./db/scripts/insertItemsToDB.ts",
     "db:seed": "npm run db:insert-cases && npm run db:insert-items"
   },
   "dependencies": {
