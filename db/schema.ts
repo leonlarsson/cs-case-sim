@@ -28,7 +28,6 @@ export const unboxes = pgTable(
       .timestamp({ mode: "date", withTimezone: true })
       .defaultNow()
       .notNull(),
-    testColumn: t.text(),
   }),
   table => ({
     idxUnboxerId: index().on(table.unboxerId),
