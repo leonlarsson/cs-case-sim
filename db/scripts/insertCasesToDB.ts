@@ -1,6 +1,7 @@
 import { z, ZodError } from "zod";
 import { cases } from "../schema.ts";
 import db from "../index.ts";
+import { sql } from "drizzle-orm";
 
 const caseSchema = z.object({
   id: z.string(),
@@ -22,16 +23,16 @@ async function insertCases() {
       return;
     }
 
-    const parsedData = z.array(caseSchema).safeParse(casesData);
+    const parseResult = z.array(caseSchema).safeParse(casesData);
 
-    if (!parsedData.success) {
-      throw new ZodError(parsedData.error.issues);
+    if (!parseResult.success) {
+      throw new ZodError(parseResult.error.issues);
     }
 
     const result = await db
       .insert(cases)
       .values(
-        parsedData.data.map(caseData => ({
+        parseResult.data.map(caseData => ({
           id: caseData.id,
           type: caseData.type,
           name: caseData.name,
@@ -39,10 +40,25 @@ async function insertCases() {
           description: caseData.description,
         })),
       )
-      .returning({ id: cases.id })
-      .onConflictDoNothing();
+      .returning({
+        id: cases.id,
+        is_inserted: sql<boolean>`(xmax = 0)`.as("is_inserted"), // `xmax = 0` means it's a new insert
+      })
+      .onConflictDoUpdate({
+        target: cases.id,
+        set: {
+          type: sql`EXCLUDED.type`,
+          name: sql`EXCLUDED.name`,
+          description: sql`EXCLUDED.description`,
+          image: sql`EXCLUDED.image`,
+        },
+      });
 
-    console.log(`Inserted ${result.length} cases.`);
+    const insertedCount = result.filter(item => item.is_inserted).length;
+
+    console.log(
+      `✓ Complete. Inserted ${insertedCount.toLocaleString("en")} new cases.`,
+    );
   } catch (error) {
     console.log("insertCases: Error inserting cases:", error);
   } finally {
