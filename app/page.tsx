@@ -24,6 +24,8 @@ const casesMetadata: CasePickerCase[] = [
   first_sale_date: x.first_sale_date,
 }));
 
+const defaultCaseId = "crate-7007";
+
 type PageProps = {
   searchParams: { case?: string };
 };
@@ -50,27 +52,27 @@ export default async function Home({ searchParams }: PageProps) {
   ];
 
   const selectedCase =
-    casesData.find(x => x.id === (selectedCaseParam ?? "crate-7003")) ??
+    casesData.find(x => x.id === (selectedCaseParam ?? defaultCaseId)) ??
     casesData[0];
 
   return (
     <main id="main" className="relative flex min-h-screen select-none flex-col">
       {/* Notice message */}
-      {/* {selectedCase.id !== "crate-7003" && (
+      {selectedCase.id !== defaultCaseId && (
         <Button
           variant="secondary-darker"
-          href="/?case=crate-7003"
+          href={`/?case=${defaultCaseId}`}
           className="mx-2 mt-1 flex w-fit items-center gap-2 py-1 backdrop-blur-md"
         >
-          Try the new Gallery Case
+          Try the new Fever Case
           <Image
-            src="https://raw.githubusercontent.com/ByMykel/counter-strike-image-tracker/main/static/panorama/images/econ/weapon_cases/crate_community_34_png.png"
-            alt="Gallery Case"
+            src="https://raw.githubusercontent.com/ByMykel/counter-strike-image-tracker/main/static/panorama/images/econ/weapon_cases/crate_community_35_png.png"
+            alt="Fever Case"
             width={256 / 7}
             height={198 / 7}
           />
         </Button>
-      )} */}
+      )}
 
       {/* Header row */}
       <div className="mx-2 mt-2 flex flex-col-reverse justify-between gap-2 min-[800px]:flex-row">

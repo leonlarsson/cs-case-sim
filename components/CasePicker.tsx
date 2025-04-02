@@ -7,6 +7,8 @@ import Button from "./Button";
 import Icons from "./icons";
 import { CasePickerCase } from "@/types";
 
+const defaultCaseId = "crate-7007";
+
 export default ({ availableCases }: { availableCases: CasePickerCase[] }) => {
   const router = useRouter();
   const [favoriteCases, setFavoriteCases] = useState<string[]>([]);
@@ -17,13 +19,13 @@ export default ({ availableCases }: { availableCases: CasePickerCase[] }) => {
   const { buttonClickAlternativeSound, caseSelectSound } = useAudio();
 
   const featuredCases: CasePickerCase[] = [
-    availableCases.find(x => x.id === "crate-7003")!,
+    availableCases.find(x => x.id === defaultCaseId)!,
   ];
 
   // Select the case based on the URL parameter
-  // If the case is not found, select the Kilowatt case, but fall back to index 0
+  // If the case is not found, select the default case, but fall back to index 0
   const selectedCase =
-    availableCases.find(x => x.id === (caseParam ?? "crate-7003")) ??
+    availableCases.find(x => x.id === (caseParam ?? defaultCaseId)) ??
     availableCases[0];
 
   // Load favorite cases from localStorage on mount
