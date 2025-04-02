@@ -1,5 +1,3 @@
-import { InferModelFromColumns, InferSelectModel } from "drizzle-orm";
-import { unboxes } from "./db/schema";
 import db from "./db";
 
 /** APICase is the case structure from the API. */
@@ -19,6 +17,11 @@ export type APICase = {
   image: string;
   contains: APIItem[];
   contains_rare: APIItem[];
+  loot_list: {
+    name: string;
+    footer: string;
+    image: string;
+  } | null;
 };
 
 /** ItemType is the item structure from the API. */

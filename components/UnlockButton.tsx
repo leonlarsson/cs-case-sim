@@ -61,7 +61,7 @@ export default ({ caseId }: { caseId: string }) => {
     const unbox = await unboxCase(caseId);
 
     if (!unbox) {
-      alert("Error unboxing item: Invalid case ID");
+      alert("Error unboxing item.");
       setUnlockButtonDisabled(false);
       return;
     }

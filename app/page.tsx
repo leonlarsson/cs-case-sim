@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Image from "next/image";
 import casesLocal from "@/lib/data/cases.json";
 import souvenirCasesLocal from "@/lib/data/souvenir.json";
-import customCasesLocal from "@/lib/data/customCases.json";
+import extraCasesLocal from "@/lib/data/extraCases.json";
 import CasePicker from "@/components/CasePicker";
 import AboutButtonWithModal from "@/components/AboutButtonWithModal";
 import UnlockButton from "@/components/UnlockButton";
@@ -14,7 +14,7 @@ import CaseItems from "@/components/CaseItems";
 // Used in the CasePicker component and for the page title
 const casesMetadata: CasePickerCase[] = [
   ...casesLocal.toReversed(),
-  ...customCasesLocal,
+  ...extraCasesLocal,
   ...souvenirCasesLocal.toReversed(),
 ].map(x => ({
   id: x.id,
@@ -41,34 +41,10 @@ export const generateMetadata = ({ searchParams }: PageProps): Metadata => {
 export default async function Home({ searchParams }: PageProps) {
   const { case: selectedCaseParam } = searchParams;
 
-  // The API made even more changes. If I use the API again, I will need to filter out certain types
-  // For now, I will just use the local data and update it manually
-  // const apis: { url: string; revalidateSeconds: number }[] = [
-  //   {
-  //     url: "https://bymykel.github.io/CSGO-API/api/en/crates/cases.json",
-  //     revalidateSeconds: 3600,
-  //   },
-  //   {
-  //     url: "https://bymykel.github.io/CSGO-API/api/en/crates/souvenir.json",
-  //     revalidateSeconds: 3600,
-  //   },
-  // ];
-
-  // const promises = apis.map(api =>
-  //   fetch(api.url, {
-  //     next: { revalidate: api.revalidateSeconds },
-  //   }).then(res => res.json()),
-  // );
-
-  // const [cases, souvenirPackages] = await Promise.all(promises);
-
-  // Combine the case data arrays
-  // This is not visual at all, so the order doesn't matter
-  // The only place where the order matters is in the CasePicker component, which uses the casesMetadata array above
   const casesData: APICase[] = [
     // ...cases,
     ...casesLocal,
-    ...customCasesLocal,
+    ...extraCasesLocal,
     ...souvenirCasesLocal,
     // ...souvenirPackages,
   ];
