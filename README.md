@@ -49,3 +49,22 @@ A toy project to simulate opening cases in Counter-Strike. Built with Next.js, T
 2. Get the Postgres IP by running the following: `docker ps` -> grab the Posgres container ID -> `docker inspect <container_id> | grep "IPAddress"`
 3. Copy the Postgres URL from the Coolify resource and use that as the `DATABASE_URL`, but replace the host with `localhost:5432`
 4. Run `npm run db:studio` to open Drizzle Studio against the production DB
+
+## Steps taken to migrate items when item ids were changed
+
+1. Enable maintenance mode (middleware)
+2. SSH into container and run `node db/scripts/deleteOldNonCoverts.ts`. This is to make the next steps faster.
+   Optionally (due to memory constraints), SSH into DB container and run:
+
+```sql
+WITH "item_ids_to_delete" AS (SELECT "id" FROM "items" WHERE "items"."rarity" NOT IN ('Covert', 'Extraordinary')) DELETE FROM "unboxes" WHERE ("unboxes"."item_id" IN (SELECT id FROM item_ids_to_delete) AND unboxed_at < NOW() - INTERVAL '14 days');
+```
+
+3. Run `node db/scripts/concatLegacyToItemIds.ts`. This will take a very long time. NOTE: If done again, logic to select which items to rename must be changed. We don't want legacy-legacy-{id} to happen.
+   Optionally (due to memory constraints), SSH into DB container and run:
+
+```sql
+UPDATE "items" SET "id" = CONCAT('legacy-', "items"."id"), "updated_at" = NOW();
+```
+
+4. Run `npm run db:seed` to insert new cases and items from the API. This will add fresh items with the new ids, and any new cases.
