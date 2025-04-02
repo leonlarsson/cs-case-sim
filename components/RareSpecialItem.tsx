@@ -8,7 +8,10 @@ type RareSpecialItemProps = {
   image?: string;
 };
 
-export const RareSpecialItem = ({ title, image }: RareSpecialItemProps) => {
+export const RareSpecialItem = ({
+  title,
+  image = "/images/rsi/default.png",
+}: RareSpecialItemProps) => {
   const { itemHoverSound } = useAudio();
 
   return (
@@ -30,14 +33,7 @@ export const RareSpecialItem = ({ title, image }: RareSpecialItemProps) => {
         />
 
         <img
-          src={
-            // Temporarily using default image until we can get the correct one
-            image?.replace(
-              "crate_community_15_rare_item_png.png",
-              "default_rare_item_png.png",
-            ) ??
-            "https://raw.githubusercontent.com/ByMykel/counter-strike-image-tracker/main/static/panorama/images/econ/weapon_cases/default_rare_item_png.png"
-          }
+          src={image}
           alt="Rare Special Item"
           className="absolute p-4"
           draggable={false}
