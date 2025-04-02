@@ -1,7 +1,16 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+const maintenanceMode = true;
+
 export const middleware = (request: NextRequest) => {
+  // Maintenance mode
+  if (maintenanceMode) {
+    return new Response(
+      "This site is currently under maintenance. Please check back later.",
+    );
+  }
+
   const response = NextResponse.next();
   const existingUnboxerId = request.cookies.get("unboxerId");
   let newUnboxerId: string = crypto.randomUUID();
