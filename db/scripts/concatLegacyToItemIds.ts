@@ -12,6 +12,7 @@ async function concatLegacyToItemIds() {
       .update(items)
       .set({ id: sql`CONCAT('legacy-', ${items.id})` })
       .returning({ id: items.id });
+    // update "items" set "id" = CONCAT('legacy-', "items"."id"), "updated_at" = NOW();
 
     const operationEnd = performance.now();
 

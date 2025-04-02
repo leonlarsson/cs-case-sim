@@ -25,6 +25,7 @@ async function deleteOldNonCovertItems() {
         ),
       )
       .returning({ id: unboxes.id });
+    // with "item_ids_to_delete" as (select "id" from "items" where "items"."rarity" not in ('Covert', 'Extraordinary')) delete from "unboxes" where ("unboxes"."item_id" IN (SELECT id FROM item_ids_to_delete) and unboxed_at < NOW() - INTERVAL '14 days');
 
     const operationEnd = performance.now();
 
