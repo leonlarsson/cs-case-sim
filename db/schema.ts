@@ -1,7 +1,7 @@
 import { pgTable, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
-// To update the DB, modify this file and run "npm run db:push". This is run on every post-deploy on Coolify.
+// To update the DB, modify this file and run "npm run db:push". This needs to be ruun manually after deploys
 
 export const stats = pgTable("stats", t => ({
   name: t
