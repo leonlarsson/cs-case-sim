@@ -1,7 +1,7 @@
 import { pgTable, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
-// To update the DB, modify this file and run "npm run db:sync"
+// To update the DB, modify this file and run "npm run db:push". This is run on every post-deploy on Coolify.
 
 export const stats = pgTable("stats", t => ({
   name: t
@@ -17,11 +17,11 @@ export const unboxes = pgTable(
     caseId: t
       .text()
       .notNull()
-      .references(() => cases.id),
+      .references(() => cases.id, { onUpdate: "cascade" }),
     itemId: t
       .text()
       .notNull()
-      .references(() => items.id),
+      .references(() => items.id, { onUpdate: "cascade" }),
     isStatTrak: t.boolean().default(false).notNull(),
     unboxerId: t.uuid(),
     unboxedAt: t
@@ -52,6 +52,16 @@ export const cases = pgTable("cases", t => ({
   name: t.text().notNull(),
   description: t.text(),
   image: t.text().notNull(),
+  createdAt: t
+    .timestamp({ mode: "date", withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: t
+    .timestamp({
+      mode: "date",
+      withTimezone: true,
+    })
+    .$onUpdate(() => new Date()),
 }));
 
 export const items = pgTable(
@@ -63,6 +73,16 @@ export const items = pgTable(
     image: t.text().notNull(),
     rarity: t.text().notNull(),
     phase: t.text(),
+    createdAt: t
+      .timestamp({ mode: "date", withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: t
+      .timestamp({
+        mode: "date",
+        withTimezone: true,
+      })
+      .$onUpdate(() => new Date()),
   }),
   table => ({
     idxRarity: index().on(table.rarity),
