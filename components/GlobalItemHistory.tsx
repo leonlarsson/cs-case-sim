@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Item from "./Item";
+import { Item } from "./Item";
 import { ItemGrade } from "@/types";
 import { getFilteredUnboxes } from "@/lib/repositories/unboxes";
 import statTrakifyName from "@/utils/statTrakifyName";

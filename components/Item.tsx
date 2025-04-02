@@ -4,21 +4,19 @@ import { ItemGrade } from "@/types";
 import { useAudio } from "./AudioProvider";
 import gradeColors from "@/utils/gradeColors";
 
-type Props = {
+type ItemProps = {
   itemName: string;
   skinName?: string;
   image?: string;
   grade?: ItemGrade;
-  isSpecial?: boolean;
 };
 
-export default ({
+export const Item = ({
   itemName,
   skinName,
   image,
   grade = "Mil-Spec Grade",
-  isSpecial,
-}: Props) => {
+}: ItemProps) => {
   const { itemHoverSound } = useAudio();
 
   return (
@@ -27,13 +25,13 @@ export default ({
       onMouseEnter={() => itemHoverSound.play()}
     >
       <div
-        className={`flex h-32 w-44 items-center justify-center border-b-[6px] bg-gradient-to-b from-neutral-600 to-neutral-400 shadow-md transition-all group-hover:shadow-lg group-hover:drop-shadow-lg`}
+        className="flex h-32 w-44 items-center justify-center border-b-[6px] bg-gradient-to-b from-neutral-600 to-neutral-400 shadow-md transition-all group-hover:shadow-lg group-hover:drop-shadow-lg"
         style={{
           borderColor: gradeColors[grade] ?? gradeColors["Mil-Spec Grade"],
         }}
       >
         <img
-          className={`${isSpecial ? "h-full w-full object-cover" : "p-2"}`}
+          className="p-2"
           src={image ?? "/images/m4a4_howl.png"}
           alt={`${itemName} image`}
           draggable={false}

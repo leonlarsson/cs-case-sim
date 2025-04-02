@@ -131,6 +131,7 @@ export default async function Home({ searchParams }: PageProps) {
           <CaseItems
             items={selectedCase.contains}
             rareItems={selectedCase.contains_rare}
+            caseLootList={selectedCase.loot_list}
           />
         </div>
 

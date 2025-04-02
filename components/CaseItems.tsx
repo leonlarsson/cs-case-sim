@@ -1,12 +1,14 @@
-import { APIItem, ItemGrade } from "@/types";
-import Item from "./Item";
+import { APICase, APIItem, ItemGrade } from "@/types";
+import { Item } from "./Item";
+import { RareSpecialItem } from "./RareSpecialItem";
 
 type Props = {
   items: APIItem[];
   rareItems: APIItem[];
+  caseLootList: APICase["loot_list"];
 };
 
-export default ({ items, rareItems }: Props) => {
+export default ({ items, rareItems, caseLootList }: Props) => {
   return (
     <>
       {items.map(item => (
@@ -20,15 +22,15 @@ export default ({ items, rareItems }: Props) => {
       ))}
 
       {rareItems.length > 0 && (
-        <Item
-          itemName={
-            rareItems[0].rarity.name === "Extraordinary"
+        <RareSpecialItem
+          // If caseLootList exists, use its name and image, otherwise use the default logic
+          title={
+            caseLootList?.name ??
+            (rareItems[0].rarity.name === "Extraordinary"
               ? "★ Gloves ★"
-              : "★ Rare Special Item ★"
+              : "★ Rare Special Item ★")
           }
-          image="/images/rsi-2.png"
-          grade="Rare Special Item"
-          isSpecial
+          image={caseLootList?.image}
         />
       )}
     </>
