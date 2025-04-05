@@ -22,7 +22,7 @@
     "dexie-react-hooks": "^1.1.7",
     "drizzle-orm": "^0.34.1",
     "howler": "^2.2.4",
-    "next": "^14.2.7",
+    "next": "^14.2.26",
     "postgres": "^3.4.4",
     "react": "^18",
     "react-dom": "^18",
