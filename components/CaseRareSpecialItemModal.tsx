@@ -2,6 +2,7 @@ import { APICase } from "@/types";
 import { Button } from "./Button";
 import { Item } from "./Item";
 import gradeColors from "@/utils/gradeColors";
+import { Icons } from "./icons";
 
 type CaseRareSpecialItemModalProps = {
   dialogRef: React.RefObject<HTMLDialogElement>;
@@ -25,7 +26,7 @@ export const CaseRareSpecialItemModal = ({
             variant="secondary-darker"
             onClick={() => dialogRef.current?.close()}
           >
-            CLOSE
+            <Icons.xMark className="size-6" />
           </Button>
         </span>
 

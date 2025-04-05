@@ -7,6 +7,7 @@ import { formatDecimal, formatPercentage } from "@/utils/formatters";
 import { ItemGrade } from "@/types";
 import { useLiveQuery } from "dexie-react-hooks";
 import { indexedDb } from "@/db/idb";
+import { Icons } from "./icons";
 
 type Props = {
   historyDialogRef: React.MutableRefObject<HTMLDialogElement | null>;
@@ -29,7 +30,7 @@ export default ({ historyDialogRef }: Props) => {
             variant="secondary-darker"
             onClick={() => historyDialogRef.current?.close()}
           >
-            CLOSE
+            <Icons.xMark className="size-6" />
           </Button>
         </span>
 
