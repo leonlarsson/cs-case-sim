@@ -31,6 +31,9 @@ RUN npm run build
 FROM base AS runner
 WORKDIR /app
 
+# Install curl for healthcheck
+RUN apk add --no-cache curl
+
 # Install dependencies needed for DB scripts
 RUN npm install postgres@3.4.4 drizzle-orm@0.34.1 drizzle-kit@0.25.0 zod@3.23.8
 
