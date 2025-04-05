@@ -118,7 +118,7 @@ export default ({ caseId }: { caseId: string }) => {
         playSoundOnClick={false}
         onClick={() => openCase()}
       >
-        UNLOCK CONTAINER
+        OPEN CONTAINER
       </Button>
 
       {/* UNBOXED DIALOG */}

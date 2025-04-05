@@ -11,6 +11,7 @@ export default () => {
     <div className="flex justify-center">
       <Button
         variant="secondary-darker"
+        className="py-1"
         onClick={() => dialogRef.current?.showModal()}
       >
         ?

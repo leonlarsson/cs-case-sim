@@ -117,13 +117,16 @@ export default async function Home({ searchParams }: PageProps) {
       {/* Item display */}
       <div className="flex flex-col backdrop-blur-md">
         <div className="my-2 px-4 lg:px-12">
-          <div className="flex items-center justify-between">
-            <span className="text-lg tracking-wider">
-              Contains one of the following:
+          <div className="relative flex items-center justify-between">
+            <div></div>
+
+            <span className="absolute left-1/2 -translate-x-1/2 transform text-center text-lg tracking-wider">
+              Open and receive one of the following
             </span>
 
             <AboutButtonWithModal />
           </div>
+
           <hr className="my-2 opacity-30" />
         </div>
 
