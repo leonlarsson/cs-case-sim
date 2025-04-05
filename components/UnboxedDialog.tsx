@@ -47,7 +47,7 @@ export default ({
     >
       <div className="flex flex-col">
         <div
-          className="border-b-[12px] bg-[#262626]/70 p-3 text-3xl font-semibold text-neutral-400"
+          className="sticky inset-0 z-50 border-b-[12px] bg-[#262626] p-3 text-3xl font-semibold text-neutral-400"
           style={{
             borderColor: unbox?.item.name.includes("★")
               ? gradeColors["Rare Special Item"]

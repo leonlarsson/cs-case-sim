@@ -22,8 +22,15 @@ export default ({ historyDialogRef }: Props) => {
       ref={historyDialogRef}
     >
       <div className="flex flex-col">
-        <span className="bg-[#262626]/70 p-3 text-3xl font-semibold text-neutral-400">
-          Stats and history
+        <span className="sticky inset-0 z-50 flex items-center justify-between bg-[#262626] p-3 text-3xl font-semibold text-neutral-400">
+          <span>Stats and history</span>
+
+          <Button
+            variant="secondary-darker"
+            onClick={() => historyDialogRef.current?.close()}
+          >
+            CLOSE
+          </Button>
         </span>
 
         <span className="p-2">

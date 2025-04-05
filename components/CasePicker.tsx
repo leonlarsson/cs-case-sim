@@ -108,7 +108,7 @@ export default ({ availableCases }: { availableCases: CasePickerCase[] }) => {
         className="mx-auto w-full max-w-4xl bg-[#2d2d2d]/50 text-white backdrop-blur-xl backdrop:bg-black/30 backdrop:backdrop-blur"
       >
         <div className="flex flex-col">
-          <div className="flex items-center justify-between bg-[#262626]/70 p-3 text-3xl font-semibold text-neutral-400">
+          <div className="sticky inset-0 z-50 flex items-center justify-between bg-[#262626] p-3 text-3xl font-semibold text-neutral-400">
             <div>
               Select a case!{" "}
               <Button variant="secondary-darker" onClick={selectCase}>

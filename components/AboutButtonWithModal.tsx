@@ -21,7 +21,7 @@ export default () => {
         ref={dialogRef}
       >
         <div className="flex flex-col">
-          <span className="bg-[#262626]/70 p-3 text-3xl font-semibold text-neutral-400">
+          <span className="sticky inset-0 z-50 bg-[#262626] p-3 text-3xl font-semibold text-neutral-400">
             Counter-Strike Case Simulator
           </span>
 
