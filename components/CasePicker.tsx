@@ -3,13 +3,17 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useAudio } from "./AudioProvider";
 import { useRouter, useSearchParams } from "next/navigation";
-import Button from "./Button";
-import Icons from "./icons";
+import { Button } from "./Button";
+import { Icons } from "./icons";
 import { CasePickerCase } from "@/types";
 
 const defaultCaseId = "crate-7007";
 
-export default ({ availableCases }: { availableCases: CasePickerCase[] }) => {
+export const CasePicker = ({
+  availableCases,
+}: {
+  availableCases: CasePickerCase[];
+}) => {
   const router = useRouter();
   const [favoriteCases, setFavoriteCases] = useState<string[]>([]);
   const [caseSearch, setCaseSearch] = useState("");

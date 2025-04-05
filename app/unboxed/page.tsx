@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import RefreshButton from "@/components/RefreshButton";
-import SettingsCheckboxes from "@/components/SettingsCheckboxes";
-import GlobalItemHistory from "@/components/GlobalItemHistory";
-import Button from "@/components/Button";
-import Icons from "@/components/icons";
+import { RefreshButton } from "@/components/RefreshButton";
+import { SettingsCheckboxes } from "@/components/SettingsCheckboxes";
+import { GlobalItemHistory } from "@/components/GlobalItemHistory";
+import { Button } from "@/components/Button";
+import { Icons } from "@/components/icons";
 import { formatDecimal } from "@/utils/formatters";
 import {
   getTotalFilteredUnboxes,

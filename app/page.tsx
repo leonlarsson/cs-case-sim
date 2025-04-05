@@ -3,12 +3,12 @@ import Image from "next/image";
 import casesLocal from "@/lib/data/cases.json";
 import souvenirCasesLocal from "@/lib/data/souvenir.json";
 import extraCasesLocal from "@/lib/data/extraCases.json";
-import CasePicker from "@/components/CasePicker";
-import AboutButtonWithModal from "@/components/AboutButtonWithModal";
-import UnlockButton from "@/components/UnlockButton";
-import Button from "@/components/Button";
+import { CasePicker } from "@/components/CasePicker";
+import { AboutButtonWithModal } from "@/components/AboutButtonWithModal";
+import { UnlockButton } from "@/components/UnlockButton";
+import { Button } from "@/components/Button";
 import { APICase, CasePickerCase } from "@/types";
-import CaseItems from "@/components/CaseItems";
+import { CaseItems } from "@/components/CaseItems";
 
 // Just get the metadata for the cases
 // Used in the CasePicker component and for the page title

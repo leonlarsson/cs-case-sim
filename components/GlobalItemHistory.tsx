@@ -4,7 +4,7 @@ import { ItemGrade } from "@/types";
 import { getFilteredUnboxes } from "@/lib/repositories/unboxes";
 import statTrakifyName from "@/utils/statTrakifyName";
 
-export default async ({
+export const GlobalItemHistory = async ({
   onlyCoverts,
   onlyPersonal,
 }: {

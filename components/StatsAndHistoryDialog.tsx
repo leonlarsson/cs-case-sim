@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Button from "./Button";
+import { Button } from "./Button";
 import gradeColors from "@/utils/gradeColors";
 import { formatDecimal, formatPercentage } from "@/utils/formatters";
 import { ItemGrade } from "@/types";

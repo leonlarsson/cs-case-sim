@@ -4,13 +4,13 @@ import { useRef, useState } from "react";
 import { useAudio } from "./AudioProvider";
 import UnboxedDialog from "./UnboxedDialog";
 import StatsAndHistoryDialog from "./StatsAndHistoryDialog";
-import Button from "./Button";
+import { Button } from "./Button";
 import { unboxCase } from "@/lib/actions";
 import { UnboxWithAllRelations } from "@/types";
 import { dbUnboxToIndexedDBItem } from "@/utils/dbUnboxToIndexedDBItem";
 import { indexedDb } from "@/db/idb";
 
-export default ({ caseId }: { caseId: string }) => {
+export const UnlockButton = ({ caseId }: { caseId: string }) => {
   const [unbox, setUnbox] = useState<UnboxWithAllRelations | null>(null);
   const [unlockButtonDisabled, setUnlockButtonDisabled] = useState(false);
   const unboxedDialogRef = useRef<HTMLDialogElement>(null);

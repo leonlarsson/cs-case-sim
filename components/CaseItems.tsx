@@ -6,7 +6,7 @@ type Props = {
   caseData: APICase;
 };
 
-export default ({ caseData }: Props) => {
+export const CaseItems = ({ caseData }: Props) => {
   return (
     <>
       {caseData.contains.map(item => (

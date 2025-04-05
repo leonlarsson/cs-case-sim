@@ -14,7 +14,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export default ({
+export const Button = ({
   variant,
   className: extraClassNames,
   disabled,

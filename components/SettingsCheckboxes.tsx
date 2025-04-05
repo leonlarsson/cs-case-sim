@@ -7,7 +7,7 @@ type Props = {
   hidePersonalCheckbox?: boolean;
 };
 
-export default ({ hidePersonalCheckbox }: Props) => {
+export const SettingsCheckboxes = ({ hidePersonalCheckbox }: Props) => {
   const [pending, startTransition] = useTransition();
   const searchParams = new URLSearchParams(useSearchParams());
   const onlyCoverts = searchParams.get("onlyCoverts") === "true";

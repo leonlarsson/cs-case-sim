@@ -2,9 +2,9 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import Icons from "./icons";
+import { Icons } from "./icons";
 
-export default () => {
+export const RefreshButton = () => {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 

@@ -1,5 +1,5 @@
 import { APICase } from "@/types";
-import Button from "./Button";
+import { Button } from "./Button";
 import { Item } from "./Item";
 import gradeColors from "@/utils/gradeColors";
 

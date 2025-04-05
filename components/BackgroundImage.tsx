@@ -1,7 +1,7 @@
 import Image from "next/image";
 import bgImage from "/public/images/bg.jpg";
 
-export default () => (
+export const BackgroundImage = () => (
   <Image
     src={bgImage}
     alt="Background image"

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import localFont from "next/font/local";
-import BackgroundImage from "@/components/BackgroundImage";
-import AudioProvider from "@/components/AudioProvider";
+import { BackgroundImage } from "@/components/BackgroundImage";
+import { AudioProvider } from "@/components/AudioProvider";
 import "./globals.css";
 
 const stratumFont = localFont({
