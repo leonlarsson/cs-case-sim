@@ -3,15 +3,13 @@ import { Item } from "./Item";
 import { RareSpecialItem } from "./RareSpecialItem";
 
 type Props = {
-  items: APIItem[];
-  rareItems: APIItem[];
-  caseLootList: APICase["loot_list"];
+  caseData: APICase;
 };
 
-export default ({ items, rareItems, caseLootList }: Props) => {
+export default ({ caseData }: Props) => {
   return (
     <>
-      {items.map(item => (
+      {caseData.contains.map(item => (
         <Item
           key={item.name}
           itemName={item.name.split(" | ")[0]}
@@ -21,16 +19,17 @@ export default ({ items, rareItems, caseLootList }: Props) => {
         />
       ))}
 
-      {rareItems.length > 0 && (
+      {caseData.contains_rare.length > 0 && (
         <RareSpecialItem
           // If caseLootList exists, use its name and image, otherwise use the default logic
           title={
-            caseLootList?.name ??
-            (rareItems[0].rarity.name === "Extraordinary"
+            caseData.loot_list?.name ??
+            (caseData.contains_rare[0].rarity.name === "Extraordinary"
               ? "★ Gloves ★"
               : "★ Rare Special Item ★")
           }
-          image={caseLootList?.image}
+          image={caseData.loot_list?.image}
+          caseData={caseData}
         />
       )}
     </>

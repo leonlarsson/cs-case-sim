@@ -128,11 +128,7 @@ export default async function Home({ searchParams }: PageProps) {
         </div>
 
         <div className="flex max-h-96 flex-wrap gap-8 overflow-auto px-4 pb-2 max-[500px]:flex-nowrap min-[800px]:px-16 [@media_(max-height:500px)]:flex-nowrap [@media_(max-height:500px)]:px-8">
-          <CaseItems
-            items={selectedCase.contains}
-            rareItems={selectedCase.contains_rare}
-            caseLootList={selectedCase.loot_list}
-          />
+          <CaseItems caseData={selectedCase} />
         </div>
 
         <hr className="container mx-auto my-5 px-20 opacity-30" />
